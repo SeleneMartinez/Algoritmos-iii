@@ -33,7 +33,7 @@ daño:=0 *pv.
 ! !
 
 
-!Alerta class methodsFor: '--** private fileout/in **--' stamp: 'SM 9/19/2022 20:48:29'!
+!Alerta class methodsFor: '--** private fileout/in **--' stamp: 'SM 9/19/2022 21:22:20'!
 initializeCollaboratorsFromFile
 	"Auto generated method for loading purposes - Do not modify it"
 
@@ -132,7 +132,7 @@ tienePuntosDeVida: puntosDeVidaAComparar
 	^ puntosDeVida = puntosDeVidaAComparar.! !
 
 
-!CombatienteHumanoArthas class methodsFor: '--** private fileout/in **--' stamp: 'SM 9/19/2022 20:48:30'!
+!CombatienteHumanoArthas class methodsFor: '--** private fileout/in **--' stamp: 'SM 9/19/2022 21:22:20'!
 initializeCollaboratorsFromFile
 	"Auto generated method for loading purposes - Do not modify it"
 
@@ -245,7 +245,7 @@ tienePuntosDeVida: puntosDeVidaAComparar
 	^ puntosDeVida = puntosDeVidaAComparar.! !
 
 
-!CombatienteOrcoMankrik class methodsFor: '--** private fileout/in **--' stamp: 'SM 9/19/2022 20:48:30'!
+!CombatienteOrcoMankrik class methodsFor: '--** private fileout/in **--' stamp: 'SM 9/19/2022 21:22:20'!
 initializeCollaboratorsFromFile
 	"Auto generated method for loading purposes - Do not modify it"
 
@@ -358,7 +358,7 @@ tienePuntosDeVida: puntosDeVidaAComparar
 	^ puntosDeVida = puntosDeVidaAComparar.! !
 
 
-!CombatienteOrcoOlgra class methodsFor: '--** private fileout/in **--' stamp: 'SM 9/19/2022 20:48:30'!
+!CombatienteOrcoOlgra class methodsFor: '--** private fileout/in **--' stamp: 'SM 9/19/2022 21:22:20'!
 initializeCollaboratorsFromFile
 	"Auto generated method for loading purposes - Do not modify it"
 
@@ -825,7 +825,7 @@ inicial
 ! !
 
 
-!Distraido class methodsFor: '--** private fileout/in **--' stamp: 'SM 9/19/2022 20:48:30'!
+!Distraido class methodsFor: '--** private fileout/in **--' stamp: 'SM 9/19/2022 21:22:20'!
 initializeCollaboratorsFromFile
 	"Auto generated method for loading purposes - Do not modify it"
 
@@ -945,7 +945,7 @@ establecerCombateEntreBando1: unBando1 contraBando2: unBando2
 
 
 
-!OrquestadorDeCombates class methodsFor: '--** private fileout/in **--' stamp: 'SM 9/19/2022 20:48:30'!
+!OrquestadorDeCombates class methodsFor: '--** private fileout/in **--' stamp: 'SM 9/19/2022 21:22:20'!
 initializeCollaboratorsFromFile
 	"Auto generated method for loading purposes - Do not modify it"
 
@@ -1247,7 +1247,7 @@ resultado
 ^('El resultado es: ', ganador, ' en la ronda numero: ', rondaFinal asString ) ! !
 
 
-!Resultado class methodsFor: '--** private fileout/in **--' stamp: 'SM 9/19/2022 20:48:30'!
+!Resultado class methodsFor: '--** private fileout/in **--' stamp: 'SM 9/19/2022 21:22:20'!
 initializeCollaboratorsFromFile
 	"Auto generated method for loading purposes - Do not modify it"
 
@@ -1301,7 +1301,7 @@ soloElSegundoBandoEstaVivo
 	^((self primerBandoEstaVivo not) and: (self segundoBandoEstaVivo )).! !
 
 
-!SituacionDeGuerra class methodsFor: '--** private fileout/in **--' stamp: 'SM 9/19/2022 20:48:30'!
+!SituacionDeGuerra class methodsFor: '--** private fileout/in **--' stamp: 'SM 9/19/2022 21:22:21'!
 initializeCollaboratorsFromFile
 	"Auto generated method for loading purposes - Do not modify it"
 

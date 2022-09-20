@@ -1,0 +1,14 @@
+1. ¿Qué crítica le harías al protocolo de #estaHerido y #noEstaHerido? (en vez de tener solo el mensaje #estaHerido y hacer “#estaHerido not” para saber la negación)
+
+2. ¿Qué opinan de que para algunas funcionalidades tenemos 3 tests para el mismo comportamiento pero aplicando a cada uno de los combatientes (Arthas, Mankrik y Olgra)
+
+3. ¿Cómo modelaron el resultado de haber desarrollado un combate? ¿qué opciones consideraron y por qué se quedaron con la que entregaron y por qué descartaron a las otras?
+
+1. Mejora la claridad a la hora de leer el mensaje si se utiliza correctamente, es similar al dominio una persona puede estar herida o no estar herida. Lo negativo es que aumenta la cantidad de mensajes que entiende el objeto y siempre intentamos representar al objeto mediante la minima cantidad de mensajes.
+2. Por mas que el comportamiento sea similar hay que testear al objeto ya que esta modelado como 3 objetos distintos, ademas podes equivocarte al momento de copiar el mensaje. Luego al refactorizar seria mejor tener un objeto combatiente con el comportamiento deseado y testear solo ese objeto.
+3. Para determinar el ganador hicimos que OrquestadorDeCombates delegue en el objeto SituacionDeGuerra el estado de los bandos, si siguen los dos vivos o murio alguno.
+En el caso de que el OrquestadorDeCombates confirme que se ha llegado a la ronda final establecida previamente o que SituacionDeGuerra haya confirmado que alguno de los bandos ha muerto le pide a SituacionDeGuerra que le diga cual fue el ganador o si no hubo.
+Por ultimo tenemos un objeto resultado que recibe el ganador y la cantidad de rondas y los guarda como colaboradores. Los utilizamos al enviar el mensaje resultado, el cual devuelve un string indicando si fue empate/ ganoBando1/ ganoBando2 y en que ronda finalizo el combate. 
+Preferimos eso por sobre dos metodos que devolvian cada uno de sus colaboradores por separado, por encapsulamiento.
+Nuestra primera aproximacion fue que OrquestadorDeCombates se encargue tanto de desarrollar los combates como de verificar la situacion de los bandos y la ronda actual ademas de determinar el ganador y devolver el resultado lo cual complejizo los mensajes del objeto debido a que se necesitaban varios ifs y mensajes de colecciones (isEmpty, do:, select:).
+Era una solucion con alto acoplamiento y codigo repetido. Por eso refactorizamos creando nuevos objetos y reasignando comportamiento y responsabilidades en ellos.
