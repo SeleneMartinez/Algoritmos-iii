@@ -1,0 +1,43 @@
+=====================================
+Se contempla otra posibilidad para la parte de dar el resultado (objetos SituacionDeGuerra y Resultado).
+------------------------------
+UNA POSIBILIDAD (POSIBILIDAD "A", RELEASE 1.1) ES
+- En #darResultado:rondaDeFinalizacion de OrquestadorDeCombates, se veía
+   darResultado: rondaDeFinalizacion
+	| ganador |
+	ganador:= situacionDeGuerra ganadorDeLaGuerra.
+	^Resultado ganaBando: ganador enRonda: rondaDeFinalizacion.
+
+- En #ganadorDeLaGuerraEnRonda de SituacionDeGuerra
+   ganadorDeLaGuerraEnRonda
+   (self losBandosEstanVivos ) ifTrue: [^'empate'] ifFalse: [ self soloElPrimerBandoEstaVivo ifTrue: 
+	[^'ganoBando1'] ifFalse: [^'ganoBando2']].
+
+- Resultado entiende tres mensajes: uno es el que informa el resultado, otro es "ganaBando:enRonda:" y otro es "empata:enRonda".
+
+-------------------------------------------------------
+OTRA POSIBILIDAD (POSIBILIDAD "B") ES
+- En #darResultado:rondaDeFinalizacion de OrquestadorDeCombates, se veía
+   darResultado: rondaDeFinalizacion
+	(situacionDeGuerra ganadorDeLaGuerraEnRonda: rondaDeFinalizacion).
+	
+- En SituacionDeGuerra
+   ganadorDeLaGuerraEnRonda: rondaDeFinalizacion
+	^(self losBandosEstanVivos )
+	    ifTrue: [^ResultadoEmpate enRonda: rondaDeFinalizacion ]
+	    ifFalse: [ self soloElPrimerBandoEstaVivo
+			ifTrue: 	[^ResultadoGanador ganaBando: 'ganoBando1' enRonda: rondaDeFinalizacion]
+			ifFalse: [^ResultadoGanador ganaBando: 'ganoBando2' enRonda: rondaDeFinalizacion]].
+(Que con otra indentación es esto de acá abajo
+ganadorDeLaGuerraEnRonda: rondaDeFinalizacion
+	^(self losBandosEstanVivos ) ifTrue: [^ResultadoEmpate enRonda: rondaDeFinalizacion ] ifFalse: [ self soloElPrimerBandoEstaVivo ifTrue: [^ResultadoGanador ganaBando: 'ganoBando1' enRonda: rondaDeFinalizacion] ifFalse: [^ResultadoGanador ganaBando: 'ganoBando2' enRonda: rondaDeFinalizacion]].)
+
+- Que existan dos objetos, ResultadoEmpate y ResultadoGanador, cada uno con dos mensajes.
+
+--------------------
+Con la posibilidad B:
+El método #darResultado queda más corto y más claro, sin confusión sobre solapamiento de responsabilidades entre situacionDeGuerra ganador y Resultado. El método "ganadorDeLaGuerraEnRonda: rondaDeFinalizacion" queda visualmente más largo porque se le envía a cada Resultado la ronda de finalización.
+Partimos del código de la posibilidad "A". Si se crean dos objetos diferentes ResultadoEmpate y ResultadoGanador (para instanciar según sea empate o haya ganador) para diferenciar los mensajes que entienden (es decir, para que, por ejemplo ResultadoEmpate ya se cree sabiendo que fue empate), entonces en #darResultado del OrquestadorDeCombates la implementación "A" debería poder distinguir de cuál de los dos 'tipos' de resultado es el Resultado que usa para poder enviarle un mensaje diferente pero eso es contrario a la idea de polimorfismo y no es lo que queremos; entonces podemos solamente hablar con SituacionDeGuerra y que ese objeto, que es el que hace las comparaciones para saber quién ganó, cree el objeto ResultadoEmpate o ResultadoGanador según sea el caso y le envíe el mensaje correspondiente.
+Se gana claridad en cuanto a las responsabilidades de SituacionDeGuerra y Resultado, y que Resultado no tenga que esperar que le informen que el bando ganador fue 'empate'. Se 'pregunta' un poco menos desde afuera. Lo negativo es que quizás se pierde claridad en "ganadorDeLaGuerraEnRonda: rondaDeFinalizacion" de SituacionDeGuerra porque ella le enviaría al resultado la ronda de finalización y eso hace visualmente más largo al método.
+
+============================================================
