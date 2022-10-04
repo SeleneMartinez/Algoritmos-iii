@@ -266,7 +266,7 @@ test42SignIsCorrectlyAssignedToFractionWithNegativeDivisor
 	self assert: oneHalf negated equals: (one / negativeTwo)! !
 
 
-!NumeroTest methodsFor: 'setup' stamp: 'NR 9/23/2018 23:46:28'!
+!NumeroTest methodsFor: 'setup' stamp: 'SM 10/3/2022 20:25:38'!
 setUp
 
 	zero := Entero with: 0.
@@ -384,18 +384,21 @@ Numero subclass: #Entero
 / aDivisor 
 	^aDivisor dividirAlEntero: self.! !
 
-!Entero methodsFor: 'arithmetic operations' stamp: 'HAW 9/24/2018 08:47:50'!
+!Entero methodsFor: 'arithmetic operations' stamp: 'SM 10/3/2022 19:56:24'!
 fibonacci
 
-	| one two |
+"	| one two |
 	
 	one := Entero with: 1.
 	two := Entero with: 2.
 	
 	self isNegative ifTrue: [self error: Entero negativeFibonacciErrorDescription ].	
+	
 	(self isZero or: [self isOne]) ifTrue: [^one].
 	
-	^ (self - one) fibonacci + (self - two) fibonacci
+	^ (self - one) fibonacci + (self - two) fibonacci"
+	
+	^self subclassResponsibility.
 		! !
 
 
@@ -409,10 +412,9 @@ hash
 	^value hash! !
 
 
-!Entero methodsFor: 'initialization' stamp: 'JS 5/5/2022 03:55:37'!
-initializeWith: aValue 
-	
-	value := aValue! !
+!Entero methodsFor: 'initialization' stamp: 'SM 10/3/2022 19:59:30'!
+initializeWith: aValue
+	value := aValue.! !
 
 
 !Entero methodsFor: 'accessing' stamp: 'HernanWilkinson 5/7/2016 21:02'!
@@ -445,15 +447,15 @@ isZero
 	^value = 0! !
 
 
-!Entero methodsFor: 'arithmetic operations - private' stamp: 'HernanWilkinson 5/7/2016 21:55'!
+!Entero methodsFor: 'arithmetic operations - private' stamp: 'SM 10/3/2022 20:21:43'!
 // aDivisor 
 	
-	^self class with: value // aDivisor integerValue! !
+	^Entero with: value // aDivisor integerValue! !
 
-!Entero methodsFor: 'arithmetic operations - private' stamp: 'HernanWilkinson 5/7/2016 21:00'!
+!Entero methodsFor: 'arithmetic operations - private' stamp: 'SM 10/3/2022 20:21:08'!
 greatestCommonDivisorWith: anEntero 
 	
-	^self class with: (value gcd: anEntero integerValue)! !
+	^Entero with: (value gcd: anEntero integerValue)! !
 
 
 !Entero methodsFor: 'arithmetic operations - dd' stamp: 'SM 10/2/2022 20:05:07'!
@@ -465,9 +467,9 @@ dividirALaFraccion: aFraccion
 dividirAlEntero: anEntero
 	^Fraccion with: anEntero over: self.! !
 
-!Entero methodsFor: 'arithmetic operations - dd' stamp: 'alm 9/30/2022 18:57:31'!
+!Entero methodsFor: 'arithmetic operations - dd' stamp: 'SM 10/3/2022 20:23:53'!
 multiplicarEntero: anEntero
-	^self class with: value * anEntero integerValue.! !
+	^Entero with: value * anEntero integerValue.! !
 
 !Entero methodsFor: 'arithmetic operations - dd' stamp: 'alm 9/30/2022 19:05:08'!
 multiplicarFraccion: aFraccion
@@ -514,13 +516,107 @@ Entero class
 negativeFibonacciErrorDescription
 	^ ' Fibonacci no está definido aquí para Enteros Negativos'! !
 
-!Entero class methodsFor: 'instance creation' stamp: 'JS 5/5/2022 03:55:37'!
+!Entero class methodsFor: 'instance creation' stamp: 'SM 10/3/2022 20:05:38'!
+newInitializeWith: aValue
+	^self new initializeWith: aValue.! !
+
+!Entero class methodsFor: 'instance creation' stamp: 'SM 10/3/2022 20:38:25'!
 with: aValue 
-	
+	|subclass|
 	"Esta verificacion esta puesta por si se equivocan y quieren crear un Entero pasando otra cosa que un Integer - Hernan"
 	aValue isInteger ifFalse: [  self error: 'aValue debe ser anInteger' ].
 	
-	^self new initializeWith: aValue! !
+	"^self new initializeWith: aValue"
+	subclass:= (self subclasses detect: [:aSubclass | aSubclass estaEnTuRango: aValue]).
+	^ subclass newInitializeWith: aValue.! !
+
+
+!Entero class methodsFor: 'private' stamp: 'SM 10/3/2022 20:38:25'!
+estaEnTuRango: aValue
+	^self subclassResponsibility.! !
+
+
+!classDefinition: #EnteroCeroOUno category: 'Numeros-Parte2-Ejercicio'!
+Entero subclass: #EnteroCeroOUno
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Numeros-Parte2-Ejercicio'!
+
+!EnteroCeroOUno methodsFor: 'arithmetic operations' stamp: 'SM 10/3/2022 20:26:56'!
+fibonacci
+	^Entero with: 1.! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'EnteroCeroOUno class' category: 'Numeros-Parte2-Ejercicio'!
+EnteroCeroOUno class
+	instanceVariableNames: ''!
+
+!EnteroCeroOUno class methodsFor: 'private' stamp: 'SM 10/3/2022 20:32:13'!
+esUnoOCero: aValue
+ ^ (aValue = 0) or: (aValue = 1).! !
+
+!EnteroCeroOUno class methodsFor: 'private' stamp: 'SM 10/3/2022 20:39:58'!
+estaEnTuRango: aValue
+	^ self esUnoOCero: aValue.! !
+
+
+!classDefinition: #EnteroMenorACero category: 'Numeros-Parte2-Ejercicio'!
+Entero subclass: #EnteroMenorACero
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Numeros-Parte2-Ejercicio'!
+
+!EnteroMenorACero methodsFor: 'arithmetic operations' stamp: 'SM 10/3/2022 19:56:37'!
+fibonacci
+	self error: Entero negativeFibonacciErrorDescription.	! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'EnteroMenorACero class' category: 'Numeros-Parte2-Ejercicio'!
+EnteroMenorACero class
+	instanceVariableNames: ''!
+
+!EnteroMenorACero class methodsFor: 'private' stamp: 'SM 10/3/2022 19:52:17'!
+esEnteroNegativo: aValue
+	^ aValue < 0.! !
+
+!EnteroMenorACero class methodsFor: 'private' stamp: 'SM 10/3/2022 20:39:19'!
+estaEnTuRango: aValue
+	^ self esEnteroNegativo: aValue.! !
+
+
+!classDefinition: #EnteroPositivoMayorAUno category: 'Numeros-Parte2-Ejercicio'!
+Entero subclass: #EnteroPositivoMayorAUno
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Numeros-Parte2-Ejercicio'!
+
+!EnteroPositivoMayorAUno methodsFor: 'arithmetic operations' stamp: 'SM 10/3/2022 20:31:27'!
+fibonacci
+	| one two |
+	
+	one := Entero with: 1.
+	two := Entero with: 2.
+	
+	^ (self - one) fibonacci + (self - two) fibonacci.! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'EnteroPositivoMayorAUno class' category: 'Numeros-Parte2-Ejercicio'!
+EnteroPositivoMayorAUno class
+	instanceVariableNames: ''!
+
+!EnteroPositivoMayorAUno class methodsFor: 'private' stamp: 'SM 10/3/2022 20:33:17'!
+esEnteroPositivoMayorAUno: aValue
+	^ (aValue>1).! !
+
+!EnteroPositivoMayorAUno class methodsFor: 'private' stamp: 'SM 10/3/2022 20:39:49'!
+estaEnTuRango: aValue
+	^ self esEnteroPositivoMayorAUno: aValue.! !
 
 
 !classDefinition: #Fraccion category: 'Numeros-Parte2-Ejercicio'!
