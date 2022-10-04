@@ -1,0 +1,48 @@
+1 _ Aporte de los mensajes de DD
+En un double dispatch (DD), ¿qué información aporta cada uno de los dos llamados?
+
+Si solo el receptor es polimórfico entonces alcanza con enviar un mensaje (ej "mascota hablar", y cada mascota implementa el mensaje a su manera).
+Si tanto el receptor del mensaje (en nuestro caso Entero o Fraccion) es polimórfico respecto a él, pero también varía el 'tipo' del parámetro recibido, enviamos dos mensajes.
+
+Con el primer llamado la información que obtenemos es a qué clase pertenece el objeto que está efectuando el llamado.
+
+En nuestro ejercicio tenemos
+<Entero> + anAdder
+	anAdder sumarAFraccion: self
+
+Supongamos el caso "3 + 1/2".
+En el primer llamado sabemos que el "receptor" del mensaje "3 + 1/2" es de la clase Entero, pero no sabemos a qué clase pertenece el objeto recibido por parámetro. Este parámetro podría ser un Entero o una Fraccion, como dependiendo de ello la operación suma se hace de dos modos diferentes, enviamos un mensaje a nuestro parámetro pasándonos como self (es decir, efectuamos un segundo llamado).
+Cada "parámetro" entonces (Entero, y Fraccion), tiene sumarAFraccion que recibe una Fraccion y sumarAEntero que recibe un Entero; como ahora somos la clase del '1/2' en el ejemplo, y tenemos métodos para recibir tanto Entero como Fraccion, hemos determinado ya todos los datos necesarios para poder realizar la suma, y estos métodos entonces ya tienen cada uno de los cálculos correspondientes.
+
+Entonces, en el primer llamado ("3 + 1/2") obtenemos la información de a qué clase pertenece el receptor (el 3); en el segundo llamado ("1/2 sumarAFraccion: 3") entramos al método correspondiente, obtenemos la información de a qué clase perteece el "parámetro" (el del primer llamado, el 1/2).
+
+
+=========
+
+2 _ Lógica de instanciado
+Con lo que vieron y saben hasta ahora, ¿donde les parece mejor tener la lógica de cómo instanciar un objeto? ¿por qué? ¿Y si se crea ese objeto desde diferentes lugares y de diferentes formas? ¿cómo lo resuelven?
+
+Cuando empezamos a implementar lo necesario para eliminar los ifs de la parte de fibonnacci, creamos subclases de Entero, y queríamos entonces modificar el setup de los tests para instanciar alguna de ellas en lugar de Entero. Esto nos traía problemas porque, a pesar de estar bien instanciadas en el setup, los tests no pasaban y era porque en otras partes del modelo se estaba instanciando un Entero, que tenía declarado como abstracto el método fibonacci que intentábamos utilizar.
+Para resolverlo, hicimos un 'switch dinámico' con un detect estaEnTuRango y el value del entero a crear, sobre la colección que contiene a todas las subclasses de Entero y todos los métodos necesarios para que funcione. De esta forma, cada subclase de Entero responde true o false a ese estaEnTuRango, y el detect selecciona la que respondió true. A ella se le envía newInitializeWith: aValue (estamos hablando con la *clase* seleccionada), que hace self new initializeWith: aValue (donde 'self new' ya devuelve una instancia suya, un objeto, por lo que ese initializeWith ya es método de instancia). De esta manera se deja la lógica dentro de la superclase (Entero) para no tener que preocuparse por cuál de todas las subclases queremos instanciar.
+Este switch dinámico resultó útil porque de continuar con el enfoque tradicional y modificar manualmente el setup de los tests, deberíamos haber cambiado Entero por alguna de sus subclases en los métodos aritméticos en los que se instanciaba un entero, y el problema es que no sabemos cuál habríamos querido instanciar (habríamos terminado agregando ifs para ver si la resta dio negativa, etc). De esta forma no ponemos ifs en esos lugares, y se instancia la subclase adecuada 'dinámicamente' es decir la adecuada según el value recibido en tiempo de ejecución al efectuar cada resta.
+
+=========
+3 _ Nombres de las categorías de métodos
+Con lo que vieron y trabajaron hasta ahora, ¿qué criterio están usando para categorizar métodos?
+
+Agrupamos los métodos en categorías según lo que hacen / su propósito. Por ejemplo, a los que tienen que ver con inicializar variables de instancia los clasificamos en initialization, también usamos "arithmethic operations - dd" para los relacionados al double dispatch de sumar y multiplicar todas las combinaciones de enteros y fracciones.
+
+=========
+4 _ Subclass Responsibility
+Si todas las subclases saben responder un mismo mensaje, ¿por qué ponemos ese mensaje sólo con un “self subclassResponsibility” en la superclase? ¿para qué sirve?
+
+Ponemos un self subclassResponsibility en la implementación de un mensaje de la superclase para indicar que dicho mensaje debe ser implementado por cada una de sus subclases pero/y que es abstracto, es decir, no lo implementarán de la misma manera todas sus subclases.
+Es útil para no olvidar implementarlo en una subclase, ya que de olvidarlo fallará alguno de los tests que pruebe ese mensaje (en todos los casos en que se tenga un mensaje abstracto, y en particular al usar un 'switch dinámico').
+
+=========
+5 _ No rompas
+¿Por qué está mal/qué problemas trae romper encapsulamiento?
+
+Romper encapsulamiento se refiere a que un objeto de una clase (o una clase, en el caso de los métodos de clase) utilice métodos (que deberían ser) privados o variables internas de otro objeto que es de otra clase. Hacer eso es problemático porque si esta segunda clase (la que es 'utilizada') posteriormente cambia su implementación, entonces habría errores en la primera clase, habría que cambiar también la implementación de la primera clase. Indica que hay un problema de modularidad, asignamos responsabilidades a cada clase y desde el exterior solo nos debería importar el qué y no el cómo.
+
+========================
