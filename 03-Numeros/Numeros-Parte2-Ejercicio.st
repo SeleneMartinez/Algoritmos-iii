@@ -287,6 +287,25 @@ setUp
 	! !
 
 
+!classDefinition: #InterfazOperacionesCruzadasEnteroFraccion category: 'Numeros-Parte2-Ejercicio'!
+Object subclass: #InterfazOperacionesCruzadasEnteroFraccion
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Numeros-Parte2-Ejercicio'!
+
+!InterfazOperacionesCruzadasEnteroFraccion methodsFor: 'arithmetic operation' stamp: 'alm 10/3/2022 22:56:43'!
+multiplicarEntero: anEntero conFraccion: aFraccion 
+	^ Fraccion with: anEntero * aFraccion numerator over: aFraccion denominator.! !
+
+!InterfazOperacionesCruzadasEnteroFraccion methodsFor: 'arithmetic operation' stamp: 'alm 10/4/2022 02:28:04'!
+sumarEntero: anEntero conFraccion: aFraccion
+		| newDenominator newNumerator |
+		newDenominator := aFraccion denominator .
+		newNumerator := aFraccion numerator + aFraccion denominator * anEntero.
+		^ Fraccion with:		newNumerator over: newDenominator! !
+
+
 !classDefinition: #Numero category: 'Numeros-Parte2-Ejercicio'!
 Object subclass: #Numero
 	instanceVariableNames: ''
@@ -314,6 +333,10 @@ Object subclass: #Numero
 
 	self subclassResponsibility ! !
 
+!Numero methodsFor: 'arithmetic operations' stamp: 'alm 10/4/2022 03:14:53'!
+inverse
+	self subclassResponsibility.! !
+
 !Numero methodsFor: 'arithmetic operations' stamp: 'NR 9/23/2018 23:37:13'!
 negated
 	
@@ -335,12 +358,6 @@ isZero
 
 	self subclassResponsibility ! !
 
-
-!Numero methodsFor: 'private' stamp: 'HernanWilkinson 5/7/2016 22:48'!
-invalidNumberType
-
-	self error: self class invalidNumberTypeErrorDescription! !
-
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
 !classDefinition: 'Numero class' category: 'Numeros-Parte2-Ejercicio'!
@@ -352,14 +369,10 @@ canNotDivideByZeroErrorDescription
 
 	^'No se puede Dividir por Cero'! !
 
-!Numero class methodsFor: 'error descriptions' stamp: 'NR 5/7/2020 17:46:56'!
-invalidNumberTypeErrorDescription
-	^ 'Tipo de Número Inválido'! !
-
 
 !classDefinition: #Entero category: 'Numeros-Parte2-Ejercicio'!
 Numero subclass: #Entero
-	instanceVariableNames: 'value'
+	instanceVariableNames: 'value interfazOpCruzadasEnteroFraccion'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Numeros-Parte2-Ejercicio'!
@@ -375,31 +388,25 @@ Numero subclass: #Entero
 	^ anAdder sumarEntero: self.
 ! !
 
-!Entero methodsFor: 'arithmetic operations' stamp: 'SM 10/2/2022 20:21:33'!
-- aSubtrahend 
-	^aSubtrahend restarmeAlEntero: self. 
+!Entero methodsFor: 'arithmetic operations' stamp: 'alm 10/4/2022 03:15:22'!
+- aSubtrahend
+	^ aSubtrahend negated + self.
+	
 	! !
 
-!Entero methodsFor: 'arithmetic operations' stamp: 'SM 10/2/2022 20:21:42'!
-/ aDivisor 
-	^aDivisor dividirAlEntero: self.! !
+!Entero methodsFor: 'arithmetic operations' stamp: 'alm 10/4/2022 03:15:31'!
+/ aDivisor
+	^ aDivisor inverse * self. "<-- obs: esto podr�a incluso ir en Numero"! !
 
-!Entero methodsFor: 'arithmetic operations' stamp: 'SM 10/3/2022 19:56:24'!
+!Entero methodsFor: 'arithmetic operations' stamp: 'alm 10/3/2022 22:28:58'!
 fibonacci
-
-"	| one two |
-	
-	one := Entero with: 1.
-	two := Entero with: 2.
-	
-	self isNegative ifTrue: [self error: Entero negativeFibonacciErrorDescription ].	
-	
-	(self isZero or: [self isOne]) ifTrue: [^one].
-	
-	^ (self - one) fibonacci + (self - two) fibonacci"
 	
 	^self subclassResponsibility.
 		! !
+
+!Entero methodsFor: 'arithmetic operations' stamp: 'alm 10/4/2022 00:21:42'!
+inverse
+	^Fraccion with: (Entero with: 1) over: self.! !
 
 
 !Entero methodsFor: 'comparing' stamp: 'SM 10/2/2022 20:29:12'!
@@ -412,9 +419,10 @@ hash
 	^value hash! !
 
 
-!Entero methodsFor: 'initialization' stamp: 'SM 10/3/2022 19:59:30'!
+!Entero methodsFor: 'initialization' stamp: 'alm 10/4/2022 03:04:52'!
 initializeWith: aValue
-	value := aValue.! !
+	value := aValue.
+	interfazOpCruzadasEnteroFraccion := InterfazOperacionesCruzadasEnteroFraccion new.! !
 
 
 !Entero methodsFor: 'accessing' stamp: 'HernanWilkinson 5/7/2016 21:02'!
@@ -458,44 +466,21 @@ greatestCommonDivisorWith: anEntero
 	^Entero with: (value gcd: anEntero integerValue)! !
 
 
-!Entero methodsFor: 'arithmetic operations - dd' stamp: 'SM 10/2/2022 20:05:07'!
-dividirALaFraccion: aFraccion
-	^ Fraccion with: aFraccion numerator over: aFraccion denominator * self .
-! !
-
-!Entero methodsFor: 'arithmetic operations - dd' stamp: 'SM 10/2/2022 20:13:40'!
-dividirAlEntero: anEntero
-	^Fraccion with: anEntero over: self.! !
-
 !Entero methodsFor: 'arithmetic operations - dd' stamp: 'SM 10/3/2022 20:23:53'!
 multiplicarEntero: anEntero
 	^Entero with: value * anEntero integerValue.! !
 
-!Entero methodsFor: 'arithmetic operations - dd' stamp: 'alm 9/30/2022 19:05:08'!
+!Entero methodsFor: 'arithmetic operations - dd' stamp: 'alm 10/4/2022 03:04:52'!
 multiplicarFraccion: aFraccion
-	^ Fraccion with: self * aFraccion numerator over: aFraccion denominator! !
+	^ interfazOpCruzadasEnteroFraccion multiplicarEntero: self conFraccion: aFraccion.! !
 
-!Entero methodsFor: 'arithmetic operations - dd' stamp: 'SM 10/2/2022 20:23:19'!
-restarmeALaFraccion: aFraccion
-	^(aFraccion  negated  + self) negated.
-		"a -b = -(-a +b)"! !
-
-!Entero methodsFor: 'arithmetic operations - dd' stamp: 'SM 10/2/2022 19:49:09'!
-restarmeAlEntero: anEntero
-
-	^ Entero with: anEntero integerValue - value.
-! !
-
-!Entero methodsFor: 'arithmetic operations - dd' stamp: 'alm 10/2/2022 19:19:22'!
+!Entero methodsFor: 'arithmetic operations - dd' stamp: 'alm 10/4/2022 02:43:10'!
 sumarEntero: anEntero
-		^Entero with: value + anEntero integerValue.! !
+	^ Entero with: value + anEntero integerValue.! !
 
-!Entero methodsFor: 'arithmetic operations - dd' stamp: 'alm 9/30/2022 18:51:37'!
+!Entero methodsFor: 'arithmetic operations - dd' stamp: 'alm 10/4/2022 03:04:52'!
 sumarFraccion: aFraccion
-	| nuevoNum nuevoDenom |
-		nuevoDenom := aFraccion denominator.
-		nuevoNum := aFraccion numerator + aFraccion denominator * self.
-		^ Fraccion with:	 nuevoNum over: nuevoDenom! !
+	^ interfazOpCruzadasEnteroFraccion sumarEntero: self conFraccion: aFraccion.! !
 
 
 !Entero methodsFor: 'comparing - dd' stamp: 'SM 10/2/2022 20:28:04'!
@@ -621,19 +606,14 @@ estaEnTuRango: aValue
 
 !classDefinition: #Fraccion category: 'Numeros-Parte2-Ejercicio'!
 Numero subclass: #Fraccion
-	instanceVariableNames: 'numerator denominator'
+	instanceVariableNames: 'numerator denominator interfazOpCruzadasEnteroFraccion'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Numeros-Parte2-Ejercicio'!
 
-!Fraccion methodsFor: 'arithmetic operations' stamp: 'alm 10/2/2022 19:31:34'!
-* aMultiplier 
-	
+!Fraccion methodsFor: 'arithmetic operations' stamp: 'alm 10/3/2022 22:30:46'!
+* aMultiplier
 	^ aMultiplier multiplicarFraccion: self.
-	"
-	(aMultiplier isKindOf: Fraccion) ifTrue: [^(numerator * aMultiplier numerator) / (denominator * aMultiplier denominator)].
-	
-	(aMultiplier isKindOf: Entero) ifTrue: [^ self class with: aMultiplier * numerator over: denominator ]."
 	! !
 
 !Fraccion methodsFor: 'arithmetic operations' stamp: 'SM 10/2/2022 20:21:51'!
@@ -641,16 +621,18 @@ Numero subclass: #Fraccion
 	^ anAdder sumarFraccion: self.
 ! !
 
-!Fraccion methodsFor: 'arithmetic operations' stamp: 'SM 10/2/2022 20:22:39'!
+!Fraccion methodsFor: 'arithmetic operations' stamp: 'alm 10/4/2022 03:16:35'!
 - aSubtrahend
-	^aSubtrahend restarmeALaFraccion: self.! !
+	^ (self negated + aSubtrahend ) negated.! !
 
-!Fraccion methodsFor: 'arithmetic operations' stamp: 'SM 10/2/2022 20:15:37'!
+!Fraccion methodsFor: 'arithmetic operations' stamp: 'alm 10/4/2022 03:16:47'!
 / aDivisor
-	^aDivisor dividirALaFraccion: self.
-	"(aDivisor isKindOf: Entero) ifTrue: [^ self class with: numerator over: denominator * aDivisor ].
-	(aDivisor isKindOf: Fraccion) ifTrue: [^(numerator * aDivisor denominator) / (denominator * aDivisor numerator)]."
+	^ aDivisor inverse * self.
 ! !
+
+!Fraccion methodsFor: 'arithmetic operations' stamp: 'alm 10/4/2022 00:22:09'!
+inverse
+	^Fraccion with: denominator over: numerator.! !
 
 
 !Fraccion methodsFor: 'comparing' stamp: 'SM 10/2/2022 20:29:03'!
@@ -674,7 +656,7 @@ numerator
 	^ numerator! !
 
 
-!Fraccion methodsFor: 'initialization' stamp: 'HernanWilkinson 5/7/2016 22:54'!
+!Fraccion methodsFor: 'initialization' stamp: 'alm 10/4/2022 03:05:12'!
 initializeWith: aNumerator over: aDenominator
 
 	"Estas precondiciones estan por si se comenten errores en la implementacion - Hernan"
@@ -682,7 +664,8 @@ initializeWith: aNumerator over: aDenominator
 	aDenominator isOne ifTrue: [ self error: 'una fraccion no puede tener denominador 1 porque sino es un entero' ].
 	
 	numerator := aNumerator.
-	denominator := aDenominator ! !
+	denominator := aDenominator.
+	interfazOpCruzadasEnteroFraccion := InterfazOperacionesCruzadasEnteroFraccion new.! !
 
 
 !Fraccion methodsFor: 'testing' stamp: 'NR 9/23/2018 23:41:38'!
@@ -719,49 +702,23 @@ soyIgualAlEntero: anEntero
 	^false.! !
 
 
-!Fraccion methodsFor: 'arithmetic operations - dd' stamp: 'SM 10/2/2022 20:17:47'!
-dividirALaFraccion: aFraccion
-	^(aFraccion numerator * denominator ) / (aFraccion denominator * numerator ).
-! !
-
-!Fraccion methodsFor: 'arithmetic operations - dd' stamp: 'SM 10/2/2022 20:13:05'!
-dividirAlEntero: anEntero
-	^ anEntero * (Fraccion with: denominator over: numerator)! !
-
-!Fraccion methodsFor: 'arithmetic operations - dd' stamp: 'alm 9/30/2022 18:59:31'!
+!Fraccion methodsFor: 'arithmetic operations - dd' stamp: 'alm 10/4/2022 03:05:12'!
 multiplicarEntero: anEntero
-	^ Fraccion with: (Entero with: anEntero integerValue) * numerator over: denominator.! !
+	^ interfazOpCruzadasEnteroFraccion multiplicarEntero: anEntero conFraccion: self.! !
 
-!Fraccion methodsFor: 'arithmetic operations - dd' stamp: 'alm 9/30/2022 19:01:43'!
+!Fraccion methodsFor: 'arithmetic operations - dd' stamp: 'alm 10/4/2022 02:44:11'!
 multiplicarFraccion: aFraccion
-	^(numerator * aFraccion numerator) / (denominator * aFraccion denominator)! !
+	^ (numerator * aFraccion numerator) / (denominator * aFraccion denominator)! !
 
-!Fraccion methodsFor: 'arithmetic operations - dd' stamp: 'SM 10/2/2022 19:55:36'!
-restarmeALaFraccion: aFraccion
-	| newNumerator newDenominator |
-	newNumerator := (aFraccion numerator * denominator) - (aFraccion denominator * numerator).
-	newDenominator := aFraccion denominator * denominator.
-	
-	^newNumerator / newDenominator! !
-
-!Fraccion methodsFor: 'arithmetic operations - dd' stamp: 'SM 10/2/2022 19:50:31'!
-restarmeAlEntero: anEntero
-
-	^ anEntero + self negated.! !
-
-!Fraccion methodsFor: 'arithmetic operations - dd' stamp: 'alm 9/30/2022 18:53:09'!
+!Fraccion methodsFor: 'arithmetic operations - dd' stamp: 'alm 10/4/2022 03:05:12'!
 sumarEntero: anEntero
-	| newDenominator newNumerator |
-		newDenominator := denominator.
-		newNumerator := numerator + denominator * anEntero .
-		^ Fraccion with:		newNumerator over: newDenominator! !
+	^ interfazOpCruzadasEnteroFraccion sumarEntero: anEntero conFraccion: self.! !
 
-!Fraccion methodsFor: 'arithmetic operations - dd' stamp: 'alm 9/30/2022 18:53:27'!
+!Fraccion methodsFor: 'arithmetic operations - dd' stamp: 'alm 10/4/2022 02:44:48'!
 sumarFraccion: aFraccion
 	| newDenominator newNumerator |
 	newNumerator := (numerator * aFraccion denominator) + (denominator * aFraccion numerator).
 	newDenominator := denominator * aFraccion denominator.
-	
 	^newNumerator / newDenominator! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
