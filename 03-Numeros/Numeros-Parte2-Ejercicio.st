@@ -377,15 +377,15 @@ Numero subclass: #Entero
 	poolDictionaries: ''
 	category: 'Numeros-Parte2-Ejercicio'!
 
-!Entero methodsFor: 'arithmetic operations' stamp: 'SM 10/2/2022 20:21:20'!
+!Entero methodsFor: 'arithmetic operations' stamp: 'alm 10/4/2022 05:19:54'!
 * aMultiplier	
-	^ aMultiplier multiplicarEntero: self.
+	^ aMultiplier multiplicarAEntero: self.
 ! !
 
-!Entero methodsFor: 'arithmetic operations' stamp: 'SM 10/2/2022 20:21:27'!
+!Entero methodsFor: 'arithmetic operations' stamp: 'alm 10/4/2022 05:21:05'!
 + anAdder 
 
-	^ anAdder sumarEntero: self.
+	^ anAdder sumarAEntero: self.
 ! !
 
 !Entero methodsFor: 'arithmetic operations' stamp: 'alm 10/4/2022 03:15:22'!
@@ -466,20 +466,20 @@ greatestCommonDivisorWith: anEntero
 	^Entero with: (value gcd: anEntero integerValue)! !
 
 
-!Entero methodsFor: 'arithmetic operations - dd' stamp: 'SM 10/3/2022 20:23:53'!
-multiplicarEntero: anEntero
+!Entero methodsFor: 'arithmetic operations - dd' stamp: 'alm 10/4/2022 05:19:54'!
+multiplicarAEntero: anEntero
 	^Entero with: value * anEntero integerValue.! !
 
-!Entero methodsFor: 'arithmetic operations - dd' stamp: 'alm 10/4/2022 03:04:52'!
-multiplicarFraccion: aFraccion
+!Entero methodsFor: 'arithmetic operations - dd' stamp: 'alm 10/4/2022 05:20:45'!
+multiplicarAFraccion: aFraccion
 	^ interfazOpCruzadasEnteroFraccion multiplicarEntero: self conFraccion: aFraccion.! !
 
-!Entero methodsFor: 'arithmetic operations - dd' stamp: 'alm 10/4/2022 02:43:10'!
-sumarEntero: anEntero
+!Entero methodsFor: 'arithmetic operations - dd' stamp: 'alm 10/4/2022 05:21:05'!
+sumarAEntero: anEntero
 	^ Entero with: value + anEntero integerValue.! !
 
-!Entero methodsFor: 'arithmetic operations - dd' stamp: 'alm 10/4/2022 03:04:52'!
-sumarFraccion: aFraccion
+!Entero methodsFor: 'arithmetic operations - dd' stamp: 'alm 10/4/2022 05:21:20'!
+sumarAFraccion: aFraccion
 	^ interfazOpCruzadasEnteroFraccion sumarEntero: self conFraccion: aFraccion.! !
 
 
@@ -611,14 +611,14 @@ Numero subclass: #Fraccion
 	poolDictionaries: ''
 	category: 'Numeros-Parte2-Ejercicio'!
 
-!Fraccion methodsFor: 'arithmetic operations' stamp: 'alm 10/3/2022 22:30:46'!
+!Fraccion methodsFor: 'arithmetic operations' stamp: 'alm 10/4/2022 05:20:45'!
 * aMultiplier
-	^ aMultiplier multiplicarFraccion: self.
+	^ aMultiplier multiplicarAFraccion: self.
 	! !
 
-!Fraccion methodsFor: 'arithmetic operations' stamp: 'SM 10/2/2022 20:21:51'!
+!Fraccion methodsFor: 'arithmetic operations' stamp: 'alm 10/4/2022 05:21:20'!
 + anAdder 
-	^ anAdder sumarFraccion: self.
+	^ anAdder sumarAFraccion: self.
 ! !
 
 !Fraccion methodsFor: 'arithmetic operations' stamp: 'alm 10/4/2022 03:16:35'!
@@ -702,20 +702,20 @@ soyIgualAlEntero: anEntero
 	^false.! !
 
 
-!Fraccion methodsFor: 'arithmetic operations - dd' stamp: 'alm 10/4/2022 03:05:12'!
-multiplicarEntero: anEntero
+!Fraccion methodsFor: 'arithmetic operations - dd' stamp: 'alm 10/4/2022 05:19:54'!
+multiplicarAEntero: anEntero
 	^ interfazOpCruzadasEnteroFraccion multiplicarEntero: anEntero conFraccion: self.! !
 
-!Fraccion methodsFor: 'arithmetic operations - dd' stamp: 'alm 10/4/2022 02:44:11'!
-multiplicarFraccion: aFraccion
+!Fraccion methodsFor: 'arithmetic operations - dd' stamp: 'alm 10/4/2022 05:20:45'!
+multiplicarAFraccion: aFraccion
 	^ (numerator * aFraccion numerator) / (denominator * aFraccion denominator)! !
 
-!Fraccion methodsFor: 'arithmetic operations - dd' stamp: 'alm 10/4/2022 03:05:12'!
-sumarEntero: anEntero
+!Fraccion methodsFor: 'arithmetic operations - dd' stamp: 'alm 10/4/2022 05:21:05'!
+sumarAEntero: anEntero
 	^ interfazOpCruzadasEnteroFraccion sumarEntero: anEntero conFraccion: self.! !
 
-!Fraccion methodsFor: 'arithmetic operations - dd' stamp: 'alm 10/4/2022 02:44:48'!
-sumarFraccion: aFraccion
+!Fraccion methodsFor: 'arithmetic operations - dd' stamp: 'alm 10/4/2022 05:21:20'!
+sumarAFraccion: aFraccion
 	| newDenominator newNumerator |
 	newNumerator := (numerator * aFraccion denominator) + (denominator * aFraccion numerator).
 	newDenominator := denominator * aFraccion denominator.
