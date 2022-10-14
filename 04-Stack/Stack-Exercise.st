@@ -249,8 +249,8 @@ setUp
 	sentenceFinder:= SentenceFinderByPrefix new.! !
 
 
-!SentenceFinderByPrefixTest methodsFor: 'tests' stamp: 'alm 10/13/2022 19:34:05'!
-test01FindPrefixInStackReturnsANewStackWithTheMatchedStrings
+!SentenceFinderByPrefixTest methodsFor: 'tests' stamp: 'alm 10/14/2022 14:37:55'!
+test01FindPrefixInStackReturnsANewStackWithTheMatchedSentences
 	
 	self setUp.
 	
@@ -267,13 +267,13 @@ test02FindPrefixInStackKeepsOriginalStackUnmodified
 	
 	self assert: stack pop equals: 'casa'.! !
 
-!SentenceFinderByPrefixTest methodsFor: 'tests' stamp: 'alm 10/13/2022 22:20:43'!
-test03CantUseEmptyStringAsPrefix
+!SentenceFinderByPrefixTest methodsFor: 'tests' stamp: 'alm 10/14/2022 14:38:46'!
+test03PrefixCantBeEmpty
 	self setUp.
 	self assertInvalidPrefixRaisesError: ''! !
 
-!SentenceFinderByPrefixTest methodsFor: 'tests' stamp: 'alm 10/13/2022 22:21:13'!
-test04CantUseStringWithSpacesAsPrefix
+!SentenceFinderByPrefixTest methodsFor: 'tests' stamp: 'alm 10/14/2022 14:39:08'!
+test04PrefixCantHaveSpaces
 	self setUp.
 	self assertInvalidPrefixRaisesError: 'Cala baza'! !
 
@@ -286,17 +286,18 @@ test05FindPrefixInStackReturnsAnEmptyStackWhenNoMatchesAreFound
 	
 	self assert: foundElementsStack size equals: 0.! !
 
-!SentenceFinderByPrefixTest methodsFor: 'tests' stamp: 'alm 10/13/2022 19:34:05'!
-test06FindPrefixInStackReturnsANewStackWithTheMatchedStrings
+!SentenceFinderByPrefixTest methodsFor: 'tests' stamp: 'alm 10/14/2022 14:36:54'!
+test06FindPrefixInStackReturnsANewStackWithTheMatchedSentences
 	
 	self setUp.
 	
 	foundElementsStack := sentenceFinder find: 'fi' in: stack. 
 	
+	self assert: foundElementsStack size equals: 1.
 	self assert: foundElementsStack size equals: 1.! !
 
-!SentenceFinderByPrefixTest methodsFor: 'tests' stamp: 'alm 10/13/2022 22:29:35'!
-test07FindPrefixInStackReturnsANewStackWithTheCaseSensitiveMatchedStrings
+!SentenceFinderByPrefixTest methodsFor: 'tests' stamp: 'alm 10/14/2022 14:37:07'!
+test07FindPrefixInStackReturnsANewStackWithTheCaseSensitiveMatchedSentences
 	
 	self setUp.
 	
@@ -304,8 +305,8 @@ test07FindPrefixInStackReturnsANewStackWithTheCaseSensitiveMatchedStrings
 	
 	self assert: foundElementsStack size equals: 0.! !
 
-!SentenceFinderByPrefixTest methodsFor: 'tests' stamp: 'alm 10/13/2022 22:37:07'!
-test08FindPrefixInStackOnlyReturnsMatchIfPrefixIsAtTheStartOfTheString
+!SentenceFinderByPrefixTest methodsFor: 'tests' stamp: 'alm 10/14/2022 14:37:23'!
+test08FindPrefixInStackOnlyReturnsMatchIfPrefixIsAtTheStartOfTheSentence
 	
 	self setUp.
 	
@@ -313,8 +314,8 @@ test08FindPrefixInStackOnlyReturnsMatchIfPrefixIsAtTheStartOfTheString
 	
 	self assert: foundElementsStack size equals: 0.! !
 
-!SentenceFinderByPrefixTest methodsFor: 'tests' stamp: 'alm 10/13/2022 22:38:37'!
-test09PrefixEqualToTheWholeStringIsAMatch
+!SentenceFinderByPrefixTest methodsFor: 'tests' stamp: 'alm 10/14/2022 14:37:34'!
+test09PrefixEqualToTheWholeSentenceIsAMatch
 	
 	self setUp.
 	
@@ -344,7 +345,7 @@ assertInvalidPrefixRaisesError: aPrefix
 
 !classDefinition: #Apilable category: 'Stack-Exercise'!
 Object subclass: #Apilable
-	instanceVariableNames: 'string elementoDeAbajo'
+	instanceVariableNames: 'value elementoDeAbajo'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Stack-Exercise'!
@@ -411,9 +412,9 @@ serTopeDe: topeViejo
 	! !
 
 
-!Elemento methodsFor: 'accessing' stamp: 'SM 10/11/2022 21:09:33'!
+!Elemento methodsFor: 'accessing' stamp: 'alm 10/14/2022 14:49:50'!
 darValue
-	^string! !
+	^value! !
 
 !Elemento methodsFor: 'accessing' stamp: 'SM 10/11/2022 21:28:44'!
 obtenerPosicion
@@ -425,9 +426,9 @@ esBase
 	^false.! !
 
 
-!Elemento methodsFor: 'instance creation' stamp: 'SM 10/11/2022 21:03:59'!
-withString: aString
-	string := aString.! !
+!Elemento methodsFor: 'instance creation' stamp: 'alm 10/14/2022 14:50:51'!
+withValue: aValue
+	value := aValue.! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -435,9 +436,9 @@ withString: aString
 Elemento class
 	instanceVariableNames: ''!
 
-!Elemento class methodsFor: 'as yet unclassified' stamp: 'SM 10/11/2022 21:03:29'!
-with: aString
-	^(Elemento new) withString: aString.! !
+!Elemento class methodsFor: 'instance creation' stamp: 'alm 10/14/2022 14:51:30'!
+with: aValue
+	^Elemento new withValue: aValue.! !
 
 
 !classDefinition: #OOStack category: 'Stack-Exercise'!
@@ -492,12 +493,13 @@ top
 OOStack class
 	instanceVariableNames: ''!
 
-!OOStack class methodsFor: 'as yet unclassified' stamp: 'SM 10/11/2022 21:18:52'!
+!OOStack class methodsFor: 'error description' stamp: 'SM 10/11/2022 21:18:52'!
 stackEmptyErrorDescription
 	
 	^ 'stack is empty!!!!!!'.! !
 
-!OOStack class methodsFor: 'as yet unclassified' stamp: 'alm 10/13/2022 20:08:49'!
+
+!OOStack class methodsFor: 'instance creation' stamp: 'alm 10/13/2022 20:08:49'!
 with: aLimit
 	^ OOStack new withLimit: aLimit.! !
 
@@ -628,7 +630,7 @@ subirTopeA: nuevoElemento
 TopeConLimite class
 	instanceVariableNames: ''!
 
-!TopeConLimite class methodsFor: 'as yet unclassified' stamp: 'alm 10/13/2022 21:37:45'!
+!TopeConLimite class methodsFor: 'instance creation' stamp: 'alm 10/13/2022 21:37:45'!
 withLimit: aLimit
 	^ TopeConLimite new withLimit: aLimit.
 	! !
@@ -640,7 +642,6 @@ Tope subclass: #TopeSinLimite
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Stack-Exercise'!
-
 
 !TopeSinLimite methodsFor: 'operations' stamp: 'alm 10/13/2022 21:42:02'!
 subirTopeA: nuevoElemento 
