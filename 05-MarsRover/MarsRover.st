@@ -70,7 +70,7 @@ test09MarsRoverNoCambiaElPuntoCardinalAlQueApuntaLuegoDeMoverseHaciaAtras
 test10MarsRoverExecutingInvalidSequenceRaiseNoEsUnComandoValidoError
 |marsRover|
 	marsRover:= MarsRover new.
-	self should:[marsRover ejecutarSecuencia: 'Ñ']
+	self should:[marsRover ejecutarSecuencia: 'Ã‘']
 		raise: Error
 		withExceptionDo: [:anError|
 			self assert: anError messageText equals: 'No es un comando valido']
@@ -88,7 +88,7 @@ test11MarsRoverCanExecuteLowerCaseCommands
 test12MarsRoverMovesUntilInvalidCommandIsGiven
 	|marsRover|
 	marsRover:= MarsRover new.
-	self should:[marsRover ejecutarSecuencia: 'rrlrffñf'.]
+	self should:[marsRover ejecutarSecuencia: 'rrlrffÃ±f'.]
 		raise: Error
 		withExceptionDo: [:anError|
 			self assert: anError messageText equals: 'No es un comando valido'.
