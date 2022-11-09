@@ -381,21 +381,34 @@ for: aValue
 	^ self new initializeFor: aValue ! !
 
 
-!classDefinition: #Portfolio category: 'ServiciosFinancieros-Ejercicio'!
-Object subclass: #Portfolio
-	instanceVariableNames: 'accounts'
+!classDefinition: #Mother category: 'ServiciosFinancieros-Ejercicio'!
+Object subclass: #Mother
+	instanceVariableNames: 'value'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'ServiciosFinancieros-Ejercicio'!
 
-!Portfolio methodsFor: 'initialization' stamp: 'alm 11/7/2022 19:49:18'!
+!Mother methodsFor: 'as yet unclassified' stamp: 'SM 11/8/2022 23:47:54'!
+contains: anAccount
+	^false.! !
+
+
+!classDefinition: #Portfolio category: 'ServiciosFinancieros-Ejercicio'!
+Object subclass: #Portfolio
+	instanceVariableNames: 'accounts mother'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'ServiciosFinancieros-Ejercicio'!
+
+!Portfolio methodsFor: 'initialization' stamp: 'SM 11/8/2022 23:49:11'!
 initialize
-	accounts := OrderedCollection new.! !
+	accounts := OrderedCollection new.
+	mother:= Mother new.! !
 
 
-!Portfolio methodsFor: 'main protocol' stamp: 'SM 11/8/2022 23:09:22'!
+!Portfolio methodsFor: 'main protocol' stamp: 'SM 11/8/2022 23:43:19'!
 add: anAccountOrPortfolio
-	(accounts noneSatisfy: [:account| anAccountOrPortfolio = account]) ifTrue: [accounts add: anAccountOrPortfolio].
+	((self contains: anAccountOrPortfolio) or: (mother contains: anAccountOrPortfolio)) ifTrue: [accounts add: anAccountOrPortfolio. anAccountOrPortfolio addMother: self].
 	"accounts add: anAccount."! !
 
 !Portfolio methodsFor: 'main protocol' stamp: 'alm 11/7/2022 19:53:28'!
@@ -419,6 +432,15 @@ transactions
 !Portfolio methodsFor: 'as yet unclassified' stamp: 'SM 11/8/2022 23:08:28'!
 = anAccountOrPortfolio
 	^accounts anySatisfy:[:account| anAccountOrPortfolio = account ].! !
+
+
+!Portfolio methodsFor: 'nil' stamp: 'SM 11/8/2022 23:42:00'!
+addMother: aMother
+	mother:= aMother.! !
+
+!Portfolio methodsFor: 'nil' stamp: 'SM 11/8/2022 23:40:27'!
+contains: anAccountOrPortfolio
+	^accounts noneSatisfy: [:account| anAccountOrPortfolio = account]! !
 
 
 !classDefinition: #ReceptiveAccount category: 'ServiciosFinancieros-Ejercicio'!
@@ -459,6 +481,11 @@ register: aTransaction
 transactions 
 
 	^ transactions copy! !
+
+
+!ReceptiveAccount methodsFor: 'nil' stamp: 'SM 11/8/2022 23:44:10'!
+addMother: aMother
+	^self.! !
 
 
 !classDefinition: #Transference category: 'ServiciosFinancieros-Ejercicio'!
