@@ -327,31 +327,18 @@ balanceValue
 
 	^ value *  (-1 )! !
 
-"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
-
-!classDefinition: 'Withdraw class' category: 'ServiciosFinancieros-Ejercicio'!
-Withdraw class
-	instanceVariableNames: ''!
-
-!Withdraw class methodsFor: 'instance creation' stamp: 'alm 11/9/2022 18:28:08'!
-register: aValue on: account
-	
-	"(account balance < aValue) ifTrue: [^'errorcito']."
-	
-	^ super register: aValue on: account.! !
-
 
-!classDefinition: #Parent category: 'ServiciosFinancieros-Ejercicio'!
-Object subclass: #Parent
+!classDefinition: #NullParent category: 'ServiciosFinancieros-Ejercicio'!
+Object subclass: #NullParent
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'ServiciosFinancieros-Ejercicio'!
-!Parent commentStamp: '<historical>' prior: 0!
+!NullParent commentStamp: '<historical>' prior: 0!
 "Null"!
 
 
-!Parent methodsFor: 'comparing' stamp: 'SM 11/8/2022 23:47:54'!
+!NullParent methodsFor: 'comparing' stamp: 'SM 11/8/2022 23:47:54'!
 contains: anAccount
 	^false.! !
 
@@ -363,10 +350,10 @@ Object subclass: #Portfolio
 	poolDictionaries: ''
 	category: 'ServiciosFinancieros-Ejercicio'!
 
-!Portfolio methodsFor: 'initialization' stamp: 'alm 11/9/2022 18:16:46'!
+!Portfolio methodsFor: 'initialization' stamp: 'alm 11/11/2022 04:25:42'!
 initialize
 	accounts := OrderedCollection new.
-	parent:= Parent new.! !
+	parent:= NullParent new.! !
 
 
 !Portfolio methodsFor: 'main protocol' stamp: 'alm 11/9/2022 17:56:49'!
