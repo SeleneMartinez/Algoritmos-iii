@@ -343,14 +343,40 @@ contains: anAccount
 	^false.! !
 
 
+!classDefinition: #PortfolioContent category: 'ServiciosFinancieros-Ejercicio'!
+Object subclass: #PortfolioContent
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'ServiciosFinancieros-Ejercicio'!
+
+!PortfolioContent methodsFor: 'main protocol' stamp: 'alm 11/11/2022 04:17:50'!
+balance
+	self subclassResponsibility.! !
+
+!PortfolioContent methodsFor: 'main protocol' stamp: 'alm 11/11/2022 04:18:27'!
+transactions
+	self subclassResponsibility.! !
+
+
+!PortfolioContent methodsFor: 'comparing' stamp: 'alm 11/11/2022 04:17:27'!
+contains: anAccountOrPortfolio
+	self subclassResponsibility. "anAccountOrPortfolio es aPortfolioContent"! !
+
+
+!PortfolioContent methodsFor: 'private' stamp: 'alm 11/11/2022 04:16:35'!
+addParent: aParent
+	self subclassResponsibility! !
+
+
 !classDefinition: #Portfolio category: 'ServiciosFinancieros-Ejercicio'!
-Object subclass: #Portfolio
+PortfolioContent subclass: #Portfolio
 	instanceVariableNames: 'accounts parent'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'ServiciosFinancieros-Ejercicio'!
 
-!Portfolio methodsFor: 'initialization' stamp: 'alm 11/11/2022 04:25:42'!
+!Portfolio methodsFor: 'initialization' stamp: 'alm 11/11/2022 04:23:46'!
 initialize
 	accounts := OrderedCollection new.
 	parent:= NullParent new.! !
@@ -401,7 +427,7 @@ contains: anAccountOrPortfolio
 
 
 !classDefinition: #ReceptiveAccount category: 'ServiciosFinancieros-Ejercicio'!
-Object subclass: #ReceptiveAccount
+PortfolioContent subclass: #ReceptiveAccount
 	instanceVariableNames: 'transactions'
 	classVariableNames: ''
 	poolDictionaries: ''
