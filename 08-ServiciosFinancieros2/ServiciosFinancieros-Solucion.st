@@ -5,52 +5,81 @@ TestCase subclass: #AccountSummaryTest
 	poolDictionaries: ''
 	category: 'ServiciosFinancieros-Solucion'!
 
-!AccountSummaryTest methodsFor: 'as yet unclassified' stamp: 'alm 11/15/2022 21:35:41'!
+!AccountSummaryTest methodsFor: 'as yet unclassified' stamp: 'alm 11/16/2022 18:17:04'!
 test01
-	| account |
+	| account accountSummary |
 	account := ReceptiveAccount new.
 	Deposit register: 100 * peso on: account.
 	
-	self assert: 'Depósito por 100 pesos',(Character cr) asString, 'Balance = 100 pesos' equals: account report. "'Depósito por 100 pesos'."
+	accountSummary := AccountSummary new.
+	self assert: 'Depósito por 100 pesos',(Character cr) asString, 'Balance = 100 pesos' equals: (accountSummary report: account).
+	
+	"account report." "'Depósito por 100 pesos'."
 	
 	"Balance = 100 pesos'".! !
 
-!AccountSummaryTest methodsFor: 'as yet unclassified' stamp: 'alm 11/15/2022 22:12:27'!
+!AccountSummaryTest methodsFor: 'as yet unclassified' stamp: 'alm 11/16/2022 18:18:05'!
 test02
-	| account |
+	| account accountSummary |
 	account := ReceptiveAccount new.
 	Deposit register: 100 * peso on: account.
 	Withdraw register: 60 * peso on: account.
 	
-	self assert: 'Depósito por 100 pesos', (Character cr) asString, 'Extracción por 60 pesos',(Character cr) asString, 'Balance = 40 pesos' equals: account report. "'Depósito por 100 pesos'."
+	accountSummary := AccountSummary new.
 	
-	"Balance = 100 pesos'".! !
+	self assert: 'Depósito por 100 pesos', (Character cr) asString, 'Extracción por 60 pesos',(Character cr) asString, 'Balance = 40 pesos' equals: (accountSummary report: account).
+	"account report." "'Depósito por 100 pesos'."
+! !
 
-!AccountSummaryTest methodsFor: 'as yet unclassified' stamp: 'alm 11/16/2022 00:52:19'!
+!AccountSummaryTest methodsFor: 'as yet unclassified' stamp: 'alm 11/16/2022 18:16:12'!
 test03
-	| destinationAccount originAccount |
+	| destinationAccount originAccount accountSummary |
 	
 	originAccount := ReceptiveAccount new.	
 	destinationAccount := ReceptiveAccount new.
 	Deposit register: 20*peso on: originAccount.
 	Transfer amount: 20 * peso from: originAccount to: destinationAccount.
 
-	self assert: 'Depósito por 20 pesos',(Character cr) asString,'Salida por transferencia de 20 pesos', (Character cr) asString, 'Balance = 0 pesos' equals: originAccount report.
+	accountSummary := AccountSummary new.
+	
+	self assert: 'Depósito por 20 pesos',(Character cr) asString,'Salida por transferencia de 20 pesos', (Character cr) asString, 'Balance = 0 pesos' equals: (accountSummary report: originAccount).
+	"originAccount report."
 	
 	"Balance = 100 pesos'".! !
 
-!AccountSummaryTest methodsFor: 'as yet unclassified' stamp: 'alm 11/16/2022 00:52:31'!
+!AccountSummaryTest methodsFor: 'as yet unclassified' stamp: 'alm 11/16/2022 18:01:00'!
 test04
-	| destinationAccount originAccount |
+	| destinationAccount originAccount accountSummary |
 	
 	originAccount := ReceptiveAccount new.	
 	destinationAccount := ReceptiveAccount new.
 	Deposit register: 30*peso on: originAccount.
 	Transfer amount: 30 * peso from: originAccount to: destinationAccount.
-
-	self assert: 'Entrada por transferencia de 30 pesos',(Character cr) asString, 'Balance = 30 pesos' equals: destinationAccount report.
+	
+	accountSummary := AccountSummary new.
+	
+	self assert: 'Entrada por transferencia de 30 pesos',(Character cr) asString, 'Balance = 30 pesos' equals: (accountSummary report: destinationAccount). "destinationAccount report."
 	
 	"Balance = 100 pesos'".! !
+
+!AccountSummaryTest methodsFor: 'as yet unclassified' stamp: 'alm 11/16/2022 18:32:44'!
+test05
+"Transfer net"
+	| destinationAccount originAccount transferNet |
+	
+	originAccount := ReceptiveAccount new.	
+	destinationAccount := ReceptiveAccount new.
+	Deposit register: 100*peso on: originAccount.
+	Transfer amount: 30 * peso from: destinationAccount to: originAccount.
+	Transfer amount: 20 * peso from: originAccount to: destinationAccount.
+	
+	transferNet := TransferNet new.
+	self assert: 		'Entrada por transferencia de 30 pesos',(Character cr) asString,
+			'Salida por transferencia de 20 pesos', (Character cr) asString,
+			'Neto = 10 pesos' 
+		equals: (transferNet report: originAccount).
+		
+		"originAccount reportTransferNet."! !
 
 
 !classDefinition: #PortfolioTest category: 'ServiciosFinancieros-Solucion'!
@@ -499,16 +528,18 @@ addTransactionsTo: aCollectionOfTransactions
 
 	aCollectionOfTransactions addAll: transactions ! !
 
-!ReceptiveAccount methodsFor: 'private' stamp: 'alm 11/15/2022 22:01:27'!
-report
-	| s |
+
+!ReceptiveAccount methodsFor: 'as yet unclassified' stamp: 'alm 11/16/2022 17:41:53'!
+reportTransferNet
+	| s neto |
 	s := ''.
-	transactions do: [:transaction | s := s,transaction report,Character cr asString].
-	s := s, 'Balance = ',self balance amount asString,' pesos'.
-	^s.
-	
-	"^ oc inject: '' into: [ :text :each | text , each asString , ' ' ]."
-	"^ Character space join: oc."! !
+	neto := 0 * peso.
+	transactions do: [:transaction | 
+		((transaction isKindOf: TransferDepositLeg ) or: (transaction isKindOf: TransferWithdrawLeg)) ifTrue: [
+				s := s,transaction report,Character cr asString.
+				neto := transaction affectBalance: neto.]].
+	s := s, 'Neto = ',neto amount asString,' pesos'.
+	^s.! !
 
 
 !classDefinition: #AccountTransaction category: 'ServiciosFinancieros-Solucion'!
@@ -518,8 +549,8 @@ Object subclass: #AccountTransaction
 	poolDictionaries: ''
 	category: 'ServiciosFinancieros-Solucion'!
 
-!AccountTransaction methodsFor: 'value' stamp: 'alm 11/14/2022 22:47:20'!
-report 
+!AccountTransaction methodsFor: 'value' stamp: 'alm 11/16/2022 18:12:29'!
+report: anAccountSummary
 
 	self subclassResponsibility ! !
 
@@ -575,9 +606,10 @@ affectBalance: aBalance
 
 	^aBalance + value ! !
 
-!Deposit methodsFor: 'balance' stamp: 'alm 11/14/2022 22:45:57'!
-report
-	^ 'Depósito por ',(self value amount) asString,' pesos'.! !
+!Deposit methodsFor: 'balance' stamp: 'alm 11/16/2022 19:09:06'!
+report: anAccountSummary
+	^ anAccountSummary addDeposit: self.
+	"'Depósito por ',(self value amount) asString,' pesos'."! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -633,9 +665,10 @@ TransferLeg subclass: #TransferDepositLeg
 	poolDictionaries: ''
 	category: 'ServiciosFinancieros-Solucion'!
 
-!TransferDepositLeg methodsFor: 'accessing' stamp: 'alm 11/15/2022 21:26:32'!
-report
-	^ 'Entrada por transferencia de ', self value amount asString, ' pesos'! !
+!TransferDepositLeg methodsFor: 'accessing' stamp: 'alm 11/16/2022 19:04:38'!
+report: anAccountSummary
+	^ anAccountSummary addTransferDepositLeg: self.
+	" 'Entrada por transferencia de ', self value amount asString, ' pesos'"! !
 
 !TransferDepositLeg methodsFor: 'accessing' stamp: 'LL 9/20/2020 22:26:10'!
 withdrawLeg
@@ -661,9 +694,10 @@ depositLeg
 
 	^transfer depositLeg! !
 
-!TransferWithdrawLeg methodsFor: 'accessing' stamp: 'alm 11/15/2022 21:25:18'!
-report
-	^ 'Salida por transferencia de ', self value amount asString, ' pesos'! !
+!TransferWithdrawLeg methodsFor: 'accessing' stamp: 'alm 11/16/2022 19:04:50'!
+report: anAccountSummary
+	^ anAccountSummary addTransferWithdrawLeg: self.
+	"'Salida por transferencia de ', self value amount asString, ' pesos'"! !
 
 
 !TransferWithdrawLeg methodsFor: 'balance' stamp: 'LL 9/20/2020 22:27:55'!
@@ -696,9 +730,10 @@ affectBalance: aBalance
 
 	^aBalance - value! !
 
-!Withdraw methodsFor: 'balance' stamp: 'alm 11/14/2022 22:46:17'!
-report
-	^ 'Extracción por ',(self value amount) asString,' pesos'.! !
+!Withdraw methodsFor: 'balance' stamp: 'alm 11/16/2022 19:09:17'!
+report: anAccountSummary
+	^ anAccountSummary addWithdraw: self.
+	" 'Extracción por ',(self value amount) asString,' pesos'."! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -710,6 +745,117 @@ Withdraw class
 for: aValue
 
 	^ self new initializeFor: aValue ! !
+
+
+!classDefinition: #Report category: 'ServiciosFinancieros-Solucion'!
+Object subclass: #Report
+	instanceVariableNames: 'reporteAMostrar'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'ServiciosFinancieros-Solucion'!
+
+!Report methodsFor: 'as yet unclassified' stamp: 'alm 11/16/2022 18:35:46'!
+addDeposit: aDepositValue
+	^ self subclassResponsibility ! !
+
+!Report methodsFor: 'as yet unclassified' stamp: 'alm 11/16/2022 18:36:17'!
+addTransferDepositLeg: aTransferDepositLeg
+	^ self subclassResponsibility ! !
+
+!Report methodsFor: 'as yet unclassified' stamp: 'alm 11/16/2022 18:37:35'!
+addTransferWithdrawLeg: aTransferWithdrawLeg
+	^ self subclassResponsibility ! !
+
+!Report methodsFor: 'as yet unclassified' stamp: 'alm 11/16/2022 18:38:11'!
+addWithdraw: aWithdrawValue
+	^ self subclassResponsibility ! !
+
+!Report methodsFor: 'as yet unclassified' stamp: 'alm 11/16/2022 18:56:29'!
+initialize
+	reporteAMostrar := ''.! !
+
+
+!classDefinition: #AccountSummary category: 'ServiciosFinancieros-Solucion'!
+Report subclass: #AccountSummary
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'ServiciosFinancieros-Solucion'!
+
+!AccountSummary methodsFor: 'as yet unclassified' stamp: 'alm 11/16/2022 19:09:47'!
+addDeposit: aDepositValue
+	reporteAMostrar := reporteAMostrar,
+					'Depósito por ',aDepositValue value amount asString,' pesos',
+					Character cr asString.! !
+
+!AccountSummary methodsFor: 'as yet unclassified' stamp: 'alm 11/16/2022 19:10:04'!
+addTransferDepositLeg: aTransferDepositLeg
+	reporteAMostrar := reporteAMostrar,
+					'Entrada por transferencia de ', aTransferDepositLeg value amount asString, ' pesos',
+					Character cr asString.! !
+
+!AccountSummary methodsFor: 'as yet unclassified' stamp: 'alm 11/16/2022 19:10:11'!
+addTransferWithdrawLeg: aTransferWithdrawLeg
+	reporteAMostrar := reporteAMostrar,
+					'Salida por transferencia de ', aTransferWithdrawLeg value amount asString, ' pesos',
+					Character cr asString.! !
+
+!AccountSummary methodsFor: 'as yet unclassified' stamp: 'alm 11/16/2022 19:09:53'!
+addWithdraw: aWithdrawValue
+	reporteAMostrar := reporteAMostrar,'Extracción por ',aWithdrawValue value amount asString,' pesos', Character cr asString.! !
+
+!AccountSummary methodsFor: 'as yet unclassified' stamp: 'alm 11/16/2022 18:58:31'!
+report: anAccount
+	
+	anAccount transactions do: [:transaction | (transaction report: self)].
+	 ^reporteAMostrar , 'Balance = ',anAccount balance amount asString,' pesos'.! !
+
+
+!classDefinition: #TransferNet category: 'ServiciosFinancieros-Solucion'!
+Report subclass: #TransferNet
+	instanceVariableNames: 'netoDeTransferencia'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'ServiciosFinancieros-Solucion'!
+
+!TransferNet methodsFor: 'as yet unclassified' stamp: 'alm 11/16/2022 18:35:24'!
+addDeposit: aDepositValue
+	! !
+
+!TransferNet methodsFor: 'as yet unclassified' stamp: 'alm 11/16/2022 19:05:32'!
+addTransferDepositLeg: aTransferDepositLeg
+	
+	netoDeTransferencia := aTransferDepositLeg affectBalance: netoDeTransferencia.
+	reporteAMostrar := reporteAMostrar,
+					'Entrada por transferencia de ', aTransferDepositLeg value amount asString, ' pesos',
+					Character cr asString.
+	! !
+
+!TransferNet methodsFor: 'as yet unclassified' stamp: 'alm 11/16/2022 19:05:39'!
+addTransferWithdrawLeg: aTransferWithdrawLeg
+
+	netoDeTransferencia := aTransferWithdrawLeg affectBalance: netoDeTransferencia.
+	reporteAMostrar := reporteAMostrar ,
+					'Salida por transferencia de ', aTransferWithdrawLeg value amount asString, ' pesos',
+					Character cr asString.! !
+
+!TransferNet methodsFor: 'as yet unclassified' stamp: 'alm 11/16/2022 18:37:56'!
+addWithdraw: aWithdrawValue
+	! !
+
+!TransferNet methodsFor: 'as yet unclassified' stamp: 'alm 11/16/2022 19:06:47'!
+initialize
+	netoDeTransferencia := 0.
+	super initialize.! !
+
+!TransferNet methodsFor: 'as yet unclassified' stamp: 'alm 11/16/2022 19:08:35'!
+report: anAccount
+	
+	anAccount transactions do: [:transaction | 
+				transaction report: self.
+				].
+	^ reporteAMostrar , 'Neto = ',netoDeTransferencia amount asString,' pesos'.
+	! !
 
 
 !classDefinition: #Transfer category: 'ServiciosFinancieros-Solucion'!
