@@ -82,6 +82,33 @@ test05
 		"originAccount reportTransferNet."! !
 
 
+!classDefinition: #PortfolioDetailedTreePrinterTest category: 'ServiciosFinancieros-Solucion'!
+TestCase subclass: #PortfolioDetailedTreePrinterTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'ServiciosFinancieros-Solucion'!
+
+!PortfolioDetailedTreePrinterTest methodsFor: 'as yet unclassified' stamp: 'alm 11/17/2022 15:47:27'!
+test01
+	
+	| familyPortfolio myAccount portfolioDetailedTreePrinter |
+	myAccount := ReceptiveAccount named: 'Cuenta mia'. 
+	familyPortfolio := Portfolio named: 'Portfolio de la familia' with: myAccount..
+	
+	Deposit register: 100 * peso on: myAccount.
+	Withdraw register: 50 * peso on: myAccount.
+	
+	portfolioDetailedTreePrinter := PortfolioDetailedTreePrinter new.
+	
+	self assert: 'Portfolio de la familia',(Character cr) asString,
+			'   Cuenta mia',(Character cr) asString,
+			'      Depósito por 100 pesos',(Character cr) asString,
+			'      Extracción por 50 pesos',(Character cr) asString,
+			'      Balance = 50 pesos'
+		equals: (portfolioDetailedTreePrinter report: familyPortfolio).! !
+
+
 !classDefinition: #PortfolioReportsTests category: 'ServiciosFinancieros-Solucion'!
 TestCase subclass: #PortfolioReportsTests
 	instanceVariableNames: ''
@@ -89,7 +116,7 @@ TestCase subclass: #PortfolioReportsTests
 	poolDictionaries: ''
 	category: 'ServiciosFinancieros-Solucion'!
 
-!PortfolioReportsTests methodsFor: 'as yet unclassified' stamp: 'alm 11/16/2022 22:59:23'!
+!PortfolioReportsTests methodsFor: 'as yet unclassified' stamp: 'alm 11/17/2022 14:32:06'!
 test01
 	
 	| johnsAccount familyPortfolio portfolioTreePrint |
@@ -98,8 +125,9 @@ test01
 	
 	portfolioTreePrint := PortfolioTreePrinter new.
 	
-	self assert: 'Portfolio de la familia',(Character cr) asString,'Cuenta de Juan'
-		equals: (portfolioTreePrint report: familyPortfolio ).! !
+	self assert: 		'Portfolio de la familia',(Character cr) asString,
+				'   Cuenta de Juan'
+		equals: (portfolioTreePrint reportProbando: familyPortfolio ).! !
 
 !PortfolioReportsTests methodsFor: 'as yet unclassified' stamp: 'alm 11/16/2022 23:17:55'!
 test01portfolioTreePrintShowsNamesOfPortfolioAndItsAccountsInATreeLikeStructure
@@ -113,7 +141,7 @@ test01portfolioTreePrintShowsNamesOfPortfolioAndItsAccountsInATreeLikeStructure
 	self assert: 'Portfolio de la familia',(Character cr) asString,'Cuenta de Juan'
 		equals: (portfolioTreePrint report: familyPortfolio ).! !
 
-!PortfolioReportsTests methodsFor: 'as yet unclassified' stamp: 'alm 11/16/2022 23:28:52'!
+!PortfolioReportsTests methodsFor: 'as yet unclassified' stamp: 'alm 11/17/2022 14:35:25'!
 test02
 	
 	| johnsAccount familyPortfolio portfolioTreePrint angiesAccount myAccount childrenPortfolio |
@@ -125,12 +153,15 @@ test02
 	
 	portfolioTreePrint := PortfolioTreePrinter new.
 	
-	self assert: 'Portfolio de la familia',(Character cr) asString,
-				'Cuenta mia',(Character cr) asString,
-				'Portfolio de hijos',(Character cr) asString,
-				'Cuenta de Juan',(Character cr) asString,
-				'Cuenta de Angeles',(Character cr) asString
-		equals: (portfolioTreePrint report: familyPortfolio ).! !
+	self assert: 			'Portfolio de la familia',(Character cr) asString,
+				'   Cuenta mia',(Character cr) asString,
+				'   Portfolio de hijos',(Character cr) asString,
+				'      Cuenta de Juan',(Character cr) asString,
+				'      Cuenta de Angeles'
+		equals: (portfolioTreePrint reportProbando: familyPortfolio).
+		
+		
+		"(portfolioTreePrint report: familyPortfolio )."! !
 
 
 !classDefinition: #PortfolioTest category: 'ServiciosFinancieros-Solucion'!
@@ -474,7 +505,7 @@ accounts
 
 !classDefinition: #Portfolio category: 'ServiciosFinancieros-Solucion'!
 Account subclass: #Portfolio
-	instanceVariableNames: 'accounts name receptiveAccount account anotherAccount_CHANGE_ME'
+	instanceVariableNames: 'accounts name'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'ServiciosFinancieros-Solucion'!
@@ -506,6 +537,14 @@ balance
 hasRegistered: aTransaction
 
 	^accounts anySatisfy: [ :anAccount | anAccount hasRegistered: aTransaction ]! !
+
+!Portfolio methodsFor: 'main protocol' stamp: 'alm 11/17/2022 14:34:19'!
+report: aPortfolioTreePrinter with: anInitialIndentation 
+
+	aPortfolioTreePrinter add: anInitialIndentation,self name.
+	accounts do: [:anAccount | aPortfolioTreePrinter add: (Character cr) asString,anInitialIndentation "'   '".
+						anAccount report: aPortfolioTreePrinter with: '   '.].
+	! !
 
 !Portfolio methodsFor: 'main protocol' stamp: 'HAW 5/25/2019 11:38:32'!
 transactions
@@ -625,6 +664,15 @@ addTransactionsTo: aCollectionOfTransactions
 !ReceptiveAccount methodsFor: 'private' stamp: 'alm 11/16/2022 23:13:21'!
 name
 	^ name.! !
+
+!ReceptiveAccount methodsFor: 'private' stamp: 'alm 11/17/2022 15:45:21'!
+report: aPortfolioTreePrinter with: anInitialIndentation 
+	"aPortfolioTreePrinter add: '   ',self name,(Character cr) asString."
+	aPortfolioTreePrinter add: anInitialIndentation,self name.
+	(aPortfolioTreePrinter isKindOf: PortfolioDetailedTreePrinter) ifTrue: [ | accountSummary reporteDeTransaccionesAConcatenar |"imprimime las transaccines"
+		accountSummary := AccountSummary new.
+		reporteDeTransaccionesAConcatenar := accountSummary report: self.
+		reporteDeTransaccionesAConcatenar linesDo: [:line | aPortfolioTreePrinter add: (Character cr) asString, anInitialIndentation, '   ',line.]].! !
 
 
 !ReceptiveAccount methodsFor: 'accesing' stamp: 'alm 11/16/2022 23:35:16'!
@@ -962,12 +1010,43 @@ for: aValue
 	^ self new initializeFor: aValue ! !
 
 
-!classDefinition: #PortfolioTreePrinter category: 'ServiciosFinancieros-Solucion'!
-Object subclass: #PortfolioTreePrinter
-	instanceVariableNames: ''
+!classDefinition: #PortfolioDetailedTreePrinter category: 'ServiciosFinancieros-Solucion'!
+Object subclass: #PortfolioDetailedTreePrinter
+	instanceVariableNames: 'reporteAMostrar'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'ServiciosFinancieros-Solucion'!
+
+!PortfolioDetailedTreePrinter methodsFor: 'as yet unclassified' stamp: 'alm 11/17/2022 14:53:04'!
+add: anAccountName
+	reporteAMostrar := reporteAMostrar,anAccountName.! !
+
+!PortfolioDetailedTreePrinter methodsFor: 'as yet unclassified' stamp: 'alm 11/17/2022 14:53:36'!
+initialize
+	reporteAMostrar := ''.! !
+
+!PortfolioDetailedTreePrinter methodsFor: 'as yet unclassified' stamp: 'alm 11/17/2022 14:57:34'!
+report: aPortfolio 
+	aPortfolio report: self with: ''.
+	^ reporteAMostrar.! !
+
+
+!classDefinition: #PortfolioTreePrinter category: 'ServiciosFinancieros-Solucion'!
+Object subclass: #PortfolioTreePrinter
+	instanceVariableNames: 'reporteAMostrar'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'ServiciosFinancieros-Solucion'!
+
+!PortfolioTreePrinter methodsFor: 'as yet unclassified' stamp: 'alm 11/17/2022 14:36:11'!
+add: anAccountName
+	reporteAMostrar := reporteAMostrar,anAccountName.
+	! !
+
+!PortfolioTreePrinter methodsFor: 'as yet unclassified' stamp: 'alm 11/17/2022 14:36:11'!
+initialize
+	reporteAMostrar := ''.
+	! !
 
 !PortfolioTreePrinter methodsFor: 'as yet unclassified' stamp: 'alm 11/17/2022 00:28:27'!
 report: aPortfolio 
@@ -975,6 +1054,12 @@ report: aPortfolio
 	s := aPortfolio name.
 	aPortfolio accounts do: [:account | s := s, (Character cr) asString, account name	.].
 	^s! !
+
+!PortfolioTreePrinter methodsFor: 'as yet unclassified' stamp: 'alm 11/17/2022 14:36:11'!
+reportProbando: aPortfolio 
+	
+	aPortfolio report: self with: ''.
+	^ reporteAMostrar.! !
 
 
 !classDefinition: #Transfer category: 'ServiciosFinancieros-Solucion'!
