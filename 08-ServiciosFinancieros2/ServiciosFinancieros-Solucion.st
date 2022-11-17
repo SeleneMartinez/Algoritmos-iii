@@ -82,6 +82,57 @@ test05
 		"originAccount reportTransferNet."! !
 
 
+!classDefinition: #PortfolioReportsTests category: 'ServiciosFinancieros-Solucion'!
+TestCase subclass: #PortfolioReportsTests
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'ServiciosFinancieros-Solucion'!
+
+!PortfolioReportsTests methodsFor: 'as yet unclassified' stamp: 'alm 11/16/2022 22:59:23'!
+test01
+	
+	| johnsAccount familyPortfolio portfolioTreePrint |
+	johnsAccount := ReceptiveAccount named: 'Cuenta de Juan'. 
+	familyPortfolio := Portfolio named: 'Portfolio de la familia' with: johnsAccount.
+	
+	portfolioTreePrint := PortfolioTreePrinter new.
+	
+	self assert: 'Portfolio de la familia',(Character cr) asString,'Cuenta de Juan'
+		equals: (portfolioTreePrint report: familyPortfolio ).! !
+
+!PortfolioReportsTests methodsFor: 'as yet unclassified' stamp: 'alm 11/16/2022 23:17:55'!
+test01portfolioTreePrintShowsNamesOfPortfolioAndItsAccountsInATreeLikeStructure
+	
+	| johnsAccount familyPortfolio portfolioTreePrint |
+	johnsAccount := ReceptiveAccount named: 'Cuenta de Juan'. 
+	familyPortfolio := Portfolio named: 'Portfolio de la familia' with: johnsAccount.
+	
+	portfolioTreePrint := PortfolioTreePrinter new.
+	
+	self assert: 'Portfolio de la familia',(Character cr) asString,'Cuenta de Juan'
+		equals: (portfolioTreePrint report: familyPortfolio ).! !
+
+!PortfolioReportsTests methodsFor: 'as yet unclassified' stamp: 'alm 11/16/2022 23:28:52'!
+test02
+	
+	| johnsAccount familyPortfolio portfolioTreePrint angiesAccount myAccount childrenPortfolio |
+	johnsAccount := ReceptiveAccount named: 'Cuenta de Juan'.
+	angiesAccount := ReceptiveAccount named: 'Cuenta de Angeles'. 
+	childrenPortfolio := Portfolio named: 'Portfolio de hijos' with: johnsAccount with: angiesAccount.
+	myAccount := ReceptiveAccount named: 'Cuenta mia'. 
+	familyPortfolio := Portfolio named: 'Portfolio de la familia' with: myAccount with: childrenPortfolio.
+	
+	portfolioTreePrint := PortfolioTreePrinter new.
+	
+	self assert: 'Portfolio de la familia',(Character cr) asString,
+				'Cuenta mia',(Character cr) asString,
+				'Portfolio de hijos',(Character cr) asString,
+				'Cuenta de Juan',(Character cr) asString,
+				'Cuenta de Angeles',(Character cr) asString
+		equals: (portfolioTreePrint report: familyPortfolio ).! !
+
+
 !classDefinition: #PortfolioTest category: 'ServiciosFinancieros-Solucion'!
 TestCase subclass: #PortfolioTest
 	instanceVariableNames: ''
@@ -415,10 +466,15 @@ addTransactionsTo: aCollectionOfTransactions
 
 	self subclassResponsibility ! !
 
+
+!Account methodsFor: 'accesing' stamp: 'alm 11/16/2022 23:35:36'!
+accounts
+	^ self subclassResponsibility ! !
+
 
 !classDefinition: #Portfolio category: 'ServiciosFinancieros-Solucion'!
 Account subclass: #Portfolio
-	instanceVariableNames: 'accounts'
+	instanceVariableNames: 'accounts name receptiveAccount account anotherAccount_CHANGE_ME'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'ServiciosFinancieros-Solucion'!
@@ -427,6 +483,18 @@ Account subclass: #Portfolio
 initialize
 
 	accounts := OrderedCollection new.! !
+
+!Portfolio methodsFor: 'initialization' stamp: 'alm 11/16/2022 22:53:00'!
+initializeNamed: aName with: aReceptiveAccount 
+	self initialize.
+	name := aName.
+	accounts add: aReceptiveAccount.! !
+
+!Portfolio methodsFor: 'initialization' stamp: 'alm 11/16/2022 23:23:36'!
+initializeNamed: aName with: anAccount with: anotherAccount 
+	name := aName.
+	accounts add: anAccount.
+	accounts add: anotherAccount.! !
 
 
 !Portfolio methodsFor: 'main protocol' stamp: 'HAW 5/25/2019 11:19:36'!
@@ -457,6 +525,19 @@ add: accountToAdd
 	! !
 
 
+!Portfolio methodsFor: 'accesing' stamp: 'alm 11/16/2022 23:34:51'!
+accounts	
+	| oc |
+	oc := OrderedCollection new.
+	accounts do: [:anAccount | oc add: anAccount accounts ].
+	^ oc.
+	! !
+
+!Portfolio methodsFor: 'accesing' stamp: 'alm 11/16/2022 23:14:10'!
+name
+	^ name.! !
+
+
 !Portfolio methodsFor: 'private' stamp: 'HAW 5/25/2019 11:42:55'!
 addTransactionsTo: aCollectionOfTransactions
 
@@ -483,10 +564,19 @@ with: anAccount with: anotherAccount
 		add: anotherAccount;
 		yourself! !
 
+
+!Portfolio class methodsFor: 'instance creation' stamp: 'alm 11/16/2022 22:50:50'!
+named: aName with: aReceptiveAccount 
+	^self new initializeNamed: aName with: aReceptiveAccount ! !
+
+!Portfolio class methodsFor: 'instance creation' stamp: 'alm 11/16/2022 23:22:38'!
+named: aName with: anAccount with: anotherAccount 
+	^self new initializeNamed: aName with: anAccount with: anotherAccount ! !
+
 
 !classDefinition: #ReceptiveAccount category: 'ServiciosFinancieros-Solucion'!
 Account subclass: #ReceptiveAccount
-	instanceVariableNames: 'transactions'
+	instanceVariableNames: 'transactions name'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'ServiciosFinancieros-Solucion'!
@@ -496,6 +586,10 @@ initialize
 
 	super initialize.
 	transactions := OrderedCollection new.! !
+
+!ReceptiveAccount methodsFor: 'initialization' stamp: 'alm 11/16/2022 22:49:07'!
+initializeNamed: aName 
+	name := aName.! !
 
 
 !ReceptiveAccount methodsFor: 'main protocol' stamp: 'HAW 5/25/2019 11:24:46'!
@@ -528,18 +622,139 @@ addTransactionsTo: aCollectionOfTransactions
 
 	aCollectionOfTransactions addAll: transactions ! !
 
+!ReceptiveAccount methodsFor: 'private' stamp: 'alm 11/16/2022 23:13:21'!
+name
+	^ name.! !
 
-!ReceptiveAccount methodsFor: 'as yet unclassified' stamp: 'alm 11/16/2022 17:41:53'!
-reportTransferNet
-	| s neto |
-	s := ''.
-	neto := 0 * peso.
-	transactions do: [:transaction | 
-		((transaction isKindOf: TransferDepositLeg ) or: (transaction isKindOf: TransferWithdrawLeg)) ifTrue: [
-				s := s,transaction report,Character cr asString.
-				neto := transaction affectBalance: neto.]].
-	s := s, 'Neto = ',neto amount asString,' pesos'.
-	^s.! !
+
+!ReceptiveAccount methodsFor: 'accesing' stamp: 'alm 11/16/2022 23:35:16'!
+accounts
+	^ self! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'ReceptiveAccount class' category: 'ServiciosFinancieros-Solucion'!
+ReceptiveAccount class
+	instanceVariableNames: ''!
+
+!ReceptiveAccount class methodsFor: 'instance creation' stamp: 'alm 11/16/2022 22:48:40'!
+named: aName 
+	^ self new initializeNamed: aName ! !
+
+
+!classDefinition: #AccountReport category: 'ServiciosFinancieros-Solucion'!
+Object subclass: #AccountReport
+	instanceVariableNames: 'reporteAMostrar'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'ServiciosFinancieros-Solucion'!
+
+!AccountReport methodsFor: 'as yet unclassified' stamp: 'alm 11/16/2022 18:35:46'!
+addDeposit: aDepositValue
+	^ self subclassResponsibility ! !
+
+!AccountReport methodsFor: 'as yet unclassified' stamp: 'alm 11/16/2022 18:36:17'!
+addTransferDepositLeg: aTransferDepositLeg
+	^ self subclassResponsibility ! !
+
+!AccountReport methodsFor: 'as yet unclassified' stamp: 'alm 11/16/2022 18:37:35'!
+addTransferWithdrawLeg: aTransferWithdrawLeg
+	^ self subclassResponsibility ! !
+
+!AccountReport methodsFor: 'as yet unclassified' stamp: 'alm 11/16/2022 18:38:11'!
+addWithdraw: aWithdrawValue
+	^ self subclassResponsibility ! !
+
+!AccountReport methodsFor: 'as yet unclassified' stamp: 'alm 11/16/2022 18:56:29'!
+initialize
+	reporteAMostrar := ''.! !
+
+!AccountReport methodsFor: 'as yet unclassified' stamp: 'alm 11/16/2022 23:40:36'!
+report: anAccount
+	self subclassResponsibility ! !
+
+
+!classDefinition: #AccountSummary category: 'ServiciosFinancieros-Solucion'!
+AccountReport subclass: #AccountSummary
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'ServiciosFinancieros-Solucion'!
+
+!AccountSummary methodsFor: 'as yet unclassified' stamp: 'alm 11/16/2022 19:09:47'!
+addDeposit: aDepositValue
+	reporteAMostrar := reporteAMostrar,
+					'Depósito por ',aDepositValue value amount asString,' pesos',
+					Character cr asString.! !
+
+!AccountSummary methodsFor: 'as yet unclassified' stamp: 'alm 11/16/2022 19:10:04'!
+addTransferDepositLeg: aTransferDepositLeg
+	reporteAMostrar := reporteAMostrar,
+					'Entrada por transferencia de ', aTransferDepositLeg value amount asString, ' pesos',
+					Character cr asString.! !
+
+!AccountSummary methodsFor: 'as yet unclassified' stamp: 'alm 11/16/2022 19:10:11'!
+addTransferWithdrawLeg: aTransferWithdrawLeg
+	reporteAMostrar := reporteAMostrar,
+					'Salida por transferencia de ', aTransferWithdrawLeg value amount asString, ' pesos',
+					Character cr asString.! !
+
+!AccountSummary methodsFor: 'as yet unclassified' stamp: 'alm 11/16/2022 19:09:53'!
+addWithdraw: aWithdrawValue
+	reporteAMostrar := reporteAMostrar,'Extracción por ',aWithdrawValue value amount asString,' pesos', Character cr asString.! !
+
+!AccountSummary methodsFor: 'as yet unclassified' stamp: 'alm 11/16/2022 18:58:31'!
+report: anAccount
+	
+	anAccount transactions do: [:transaction | (transaction report: self)].
+	 ^reporteAMostrar , 'Balance = ',anAccount balance amount asString,' pesos'.! !
+
+
+!classDefinition: #TransferNet category: 'ServiciosFinancieros-Solucion'!
+AccountReport subclass: #TransferNet
+	instanceVariableNames: 'netoDeTransferencia'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'ServiciosFinancieros-Solucion'!
+
+!TransferNet methodsFor: 'as yet unclassified' stamp: 'alm 11/16/2022 18:35:24'!
+addDeposit: aDepositValue
+	! !
+
+!TransferNet methodsFor: 'as yet unclassified' stamp: 'alm 11/16/2022 19:05:32'!
+addTransferDepositLeg: aTransferDepositLeg
+	
+	netoDeTransferencia := aTransferDepositLeg affectBalance: netoDeTransferencia.
+	reporteAMostrar := reporteAMostrar,
+					'Entrada por transferencia de ', aTransferDepositLeg value amount asString, ' pesos',
+					Character cr asString.
+	! !
+
+!TransferNet methodsFor: 'as yet unclassified' stamp: 'alm 11/16/2022 19:05:39'!
+addTransferWithdrawLeg: aTransferWithdrawLeg
+
+	netoDeTransferencia := aTransferWithdrawLeg affectBalance: netoDeTransferencia.
+	reporteAMostrar := reporteAMostrar ,
+					'Salida por transferencia de ', aTransferWithdrawLeg value amount asString, ' pesos',
+					Character cr asString.! !
+
+!TransferNet methodsFor: 'as yet unclassified' stamp: 'alm 11/16/2022 18:37:56'!
+addWithdraw: aWithdrawValue
+	! !
+
+!TransferNet methodsFor: 'as yet unclassified' stamp: 'alm 11/16/2022 19:06:47'!
+initialize
+	netoDeTransferencia := 0.
+	super initialize.! !
+
+!TransferNet methodsFor: 'as yet unclassified' stamp: 'alm 11/16/2022 19:08:35'!
+report: anAccount
+	
+	anAccount transactions do: [:transaction | 
+				transaction report: self.
+				].
+	^ reporteAMostrar , 'Neto = ',netoDeTransferencia amount asString,' pesos'.
+	! !
 
 
 !classDefinition: #AccountTransaction category: 'ServiciosFinancieros-Solucion'!
@@ -747,115 +962,19 @@ for: aValue
 	^ self new initializeFor: aValue ! !
 
 
-!classDefinition: #Report category: 'ServiciosFinancieros-Solucion'!
-Object subclass: #Report
-	instanceVariableNames: 'reporteAMostrar'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'ServiciosFinancieros-Solucion'!
-
-!Report methodsFor: 'as yet unclassified' stamp: 'alm 11/16/2022 18:35:46'!
-addDeposit: aDepositValue
-	^ self subclassResponsibility ! !
-
-!Report methodsFor: 'as yet unclassified' stamp: 'alm 11/16/2022 18:36:17'!
-addTransferDepositLeg: aTransferDepositLeg
-	^ self subclassResponsibility ! !
-
-!Report methodsFor: 'as yet unclassified' stamp: 'alm 11/16/2022 18:37:35'!
-addTransferWithdrawLeg: aTransferWithdrawLeg
-	^ self subclassResponsibility ! !
-
-!Report methodsFor: 'as yet unclassified' stamp: 'alm 11/16/2022 18:38:11'!
-addWithdraw: aWithdrawValue
-	^ self subclassResponsibility ! !
-
-!Report methodsFor: 'as yet unclassified' stamp: 'alm 11/16/2022 18:56:29'!
-initialize
-	reporteAMostrar := ''.! !
-
-
-!classDefinition: #AccountSummary category: 'ServiciosFinancieros-Solucion'!
-Report subclass: #AccountSummary
+!classDefinition: #PortfolioTreePrinter category: 'ServiciosFinancieros-Solucion'!
+Object subclass: #PortfolioTreePrinter
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'ServiciosFinancieros-Solucion'!
 
-!AccountSummary methodsFor: 'as yet unclassified' stamp: 'alm 11/16/2022 19:09:47'!
-addDeposit: aDepositValue
-	reporteAMostrar := reporteAMostrar,
-					'Depósito por ',aDepositValue value amount asString,' pesos',
-					Character cr asString.! !
-
-!AccountSummary methodsFor: 'as yet unclassified' stamp: 'alm 11/16/2022 19:10:04'!
-addTransferDepositLeg: aTransferDepositLeg
-	reporteAMostrar := reporteAMostrar,
-					'Entrada por transferencia de ', aTransferDepositLeg value amount asString, ' pesos',
-					Character cr asString.! !
-
-!AccountSummary methodsFor: 'as yet unclassified' stamp: 'alm 11/16/2022 19:10:11'!
-addTransferWithdrawLeg: aTransferWithdrawLeg
-	reporteAMostrar := reporteAMostrar,
-					'Salida por transferencia de ', aTransferWithdrawLeg value amount asString, ' pesos',
-					Character cr asString.! !
-
-!AccountSummary methodsFor: 'as yet unclassified' stamp: 'alm 11/16/2022 19:09:53'!
-addWithdraw: aWithdrawValue
-	reporteAMostrar := reporteAMostrar,'Extracción por ',aWithdrawValue value amount asString,' pesos', Character cr asString.! !
-
-!AccountSummary methodsFor: 'as yet unclassified' stamp: 'alm 11/16/2022 18:58:31'!
-report: anAccount
-	
-	anAccount transactions do: [:transaction | (transaction report: self)].
-	 ^reporteAMostrar , 'Balance = ',anAccount balance amount asString,' pesos'.! !
-
-
-!classDefinition: #TransferNet category: 'ServiciosFinancieros-Solucion'!
-Report subclass: #TransferNet
-	instanceVariableNames: 'netoDeTransferencia'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'ServiciosFinancieros-Solucion'!
-
-!TransferNet methodsFor: 'as yet unclassified' stamp: 'alm 11/16/2022 18:35:24'!
-addDeposit: aDepositValue
-	! !
-
-!TransferNet methodsFor: 'as yet unclassified' stamp: 'alm 11/16/2022 19:05:32'!
-addTransferDepositLeg: aTransferDepositLeg
-	
-	netoDeTransferencia := aTransferDepositLeg affectBalance: netoDeTransferencia.
-	reporteAMostrar := reporteAMostrar,
-					'Entrada por transferencia de ', aTransferDepositLeg value amount asString, ' pesos',
-					Character cr asString.
-	! !
-
-!TransferNet methodsFor: 'as yet unclassified' stamp: 'alm 11/16/2022 19:05:39'!
-addTransferWithdrawLeg: aTransferWithdrawLeg
-
-	netoDeTransferencia := aTransferWithdrawLeg affectBalance: netoDeTransferencia.
-	reporteAMostrar := reporteAMostrar ,
-					'Salida por transferencia de ', aTransferWithdrawLeg value amount asString, ' pesos',
-					Character cr asString.! !
-
-!TransferNet methodsFor: 'as yet unclassified' stamp: 'alm 11/16/2022 18:37:56'!
-addWithdraw: aWithdrawValue
-	! !
-
-!TransferNet methodsFor: 'as yet unclassified' stamp: 'alm 11/16/2022 19:06:47'!
-initialize
-	netoDeTransferencia := 0.
-	super initialize.! !
-
-!TransferNet methodsFor: 'as yet unclassified' stamp: 'alm 11/16/2022 19:08:35'!
-report: anAccount
-	
-	anAccount transactions do: [:transaction | 
-				transaction report: self.
-				].
-	^ reporteAMostrar , 'Neto = ',netoDeTransferencia amount asString,' pesos'.
-	! !
+!PortfolioTreePrinter methodsFor: 'as yet unclassified' stamp: 'alm 11/17/2022 00:28:27'!
+report: aPortfolio 
+	| s |
+	s := aPortfolio name.
+	aPortfolio accounts do: [:account | s := s, (Character cr) asString, account name	.].
+	^s! !
 
 
 !classDefinition: #Transfer category: 'ServiciosFinancieros-Solucion'!
