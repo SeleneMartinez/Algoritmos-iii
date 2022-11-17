@@ -89,7 +89,7 @@ TestCase subclass: #PortfolioDetailedTreePrinterTest
 	poolDictionaries: ''
 	category: 'ServiciosFinancieros-Solucion'!
 
-!PortfolioDetailedTreePrinterTest methodsFor: 'as yet unclassified' stamp: 'alm 11/17/2022 15:47:27'!
+!PortfolioDetailedTreePrinterTest methodsFor: 'as yet unclassified' stamp: 'alm 11/17/2022 16:48:44'!
 test01
 	
 	| familyPortfolio myAccount portfolioDetailedTreePrinter |
@@ -105,8 +105,50 @@ test01
 			'   Cuenta mia',(Character cr) asString,
 			'      Depósito por 100 pesos',(Character cr) asString,
 			'      Extracción por 50 pesos',(Character cr) asString,
-			'      Balance = 50 pesos'
+			'      Balance = 50 pesos',(Character cr) asString,
+			'   Balance = 50 pesos'
 		equals: (portfolioDetailedTreePrinter report: familyPortfolio).! !
+
+!PortfolioDetailedTreePrinterTest methodsFor: 'as yet unclassified' stamp: 'alm 11/17/2022 16:58:18'!
+test02
+	
+	| angiesAccount childrenPortfolio familyPortfolio johnsAccount myAccount portfolioDetailedTreePrinter reporteEsperado destinationAccount actualReport |
+	johnsAccount := ReceptiveAccount named: 'Cuenta de Juan'.
+	angiesAccount := ReceptiveAccount named: 'Cuenta de Angeles'. 
+	childrenPortfolio := Portfolio named: 'Portfolio de hijos' with: johnsAccount with: angiesAccount.
+	myAccount := ReceptiveAccount named: 'Cuenta mia'. 
+	familyPortfolio := Portfolio named: 'Portfolio de la familia' with: myAccount with: childrenPortfolio.
+	destinationAccount := ReceptiveAccount named: 'Una cuenta'. 
+	
+	Deposit register: 100 * peso on: myAccount.
+	Withdraw register: 50 * peso on: myAccount.
+	
+	Deposit register: 100 * peso on: johnsAccount.
+	Withdraw register: 60 * peso on: johnsAccount.
+	
+	Transfer amount: 20*peso from: angiesAccount to: destinationAccount.
+	
+	portfolioDetailedTreePrinter := PortfolioDetailedTreePrinter new.
+	
+	reporteEsperado:= 			'Portfolio de la familia',(Character cr) asString,
+			'   Cuenta mia',(Character cr) asString,
+			'      Depósito por 100 pesos',(Character cr) asString,
+			'      Extracción por 50 pesos',(Character cr) asString,
+			'      Balance = 50 pesos',(Character cr) asString,
+			'   Portfolio de hijos',(Character cr) asString,
+			'      Cuenta de Juan',(Character cr) asString,
+			'         Depósito por 100 pesos',(Character cr) asString,
+			'         Extracción por 60 pesos',(Character cr) asString,
+			'         Balance = 40 pesos',(Character cr) asString,
+			'      Cuenta de Angeles',(Character cr) asString,
+			'         Salida por transferencia de 20 pesos',(Character cr) asString,
+			'         Balance = -20 pesos',(Character cr) asString,
+			'      Balance = 20 pesos',(Character cr) asString,
+			'   Balance = 70 pesos'.
+	actualReport := (portfolioDetailedTreePrinter report: familyPortfolio).
+	self assert: reporteEsperado		equals: actualReport. "(portfolioDetailedTreePrinter report: familyPortfolio)."
+		
+! !
 
 
 !classDefinition: #PortfolioReportsTests category: 'ServiciosFinancieros-Solucion'!
@@ -538,13 +580,15 @@ hasRegistered: aTransaction
 
 	^accounts anySatisfy: [ :anAccount | anAccount hasRegistered: aTransaction ]! !
 
-!Portfolio methodsFor: 'main protocol' stamp: 'alm 11/17/2022 14:34:19'!
+!Portfolio methodsFor: 'main protocol' stamp: 'alm 11/17/2022 16:54:03'!
 report: aPortfolioTreePrinter with: anInitialIndentation 
 
 	aPortfolioTreePrinter add: anInitialIndentation,self name.
-	accounts do: [:anAccount | aPortfolioTreePrinter add: (Character cr) asString,anInitialIndentation "'   '".
-						anAccount report: aPortfolioTreePrinter with: '   '.].
-	! !
+	accounts do: [:anAccount | aPortfolioTreePrinter add: (Character cr) asString",anInitialIndentation".
+						anAccount report: aPortfolioTreePrinter with: anInitialIndentation,'   '.].
+	
+	(aPortfolioTreePrinter isKindOf: PortfolioDetailedTreePrinter) ifTrue:
+							[aPortfolioTreePrinter add: (Character cr) asString,anInitialIndentation,'   ' ,'Balance = ',(self balance amount) asString,' pesos'.]! !
 
 !Portfolio methodsFor: 'main protocol' stamp: 'HAW 5/25/2019 11:38:32'!
 transactions
@@ -631,11 +675,11 @@ initializeNamed: aName
 	name := aName.! !
 
 
-!ReceptiveAccount methodsFor: 'main protocol' stamp: 'HAW 5/25/2019 11:24:46'!
+!ReceptiveAccount methodsFor: 'main protocol' stamp: 'alm 11/17/2022 15:59:48'!
 balance
 
 	^transactions 
-		inject: 0
+		inject: 0 * peso
 		into: [ :currentBalance :transaction | transaction affectBalance: currentBalance ]! !
 
 !ReceptiveAccount methodsFor: 'main protocol' stamp: 'NR 10/21/2019 18:55:56'!
