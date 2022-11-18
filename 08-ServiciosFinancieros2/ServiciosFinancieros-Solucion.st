@@ -5,41 +5,55 @@ TestCase subclass: #AccountReportsTest
 	poolDictionaries: ''
 	category: 'ServiciosFinancieros-Solucion'!
 
+!AccountReportsTest methodsFor: 'accountSummaryTests' stamp: 'alm 11/18/2022 14:32:29'!
+deposit: anAmountToDeposit inOriginAndThenTransfer: anAmountToTransfer from: anOriginAccount to: aDestinationAccount.
+	
+	Deposit register: anAmountToDeposit on: anOriginAccount.
+	Transfer amount: anAmountToTransfer from: anOriginAccount to: aDestinationAccount.! !
+
 !AccountReportsTest methodsFor: 'accountSummaryTests' stamp: 'alm 11/17/2022 22:13:29'!
 newline
 
 	^ String newLineString! !
 
-!AccountReportsTest methodsFor: 'accountSummaryTests' stamp: 'alm 11/18/2022 13:39:12'!
+!AccountReportsTest methodsFor: 'accountSummaryTests' stamp: 'alm 11/18/2022 14:28:52'!
 test01accountSummaryMuestraLosDepositosRealizadosEnLaCuentaYSuBalance
 	
 	Deposit register: 100 * peso on: account.
 	
-	self assert: 'Depósito por 100 pesos',self newline, 'Balance = 100 pesos' equals: (accountSummary report: account).! !
+	self assert: 			'Depósito por 100 pesos',self newline,
+				'Balance = 100 pesos'
+		equals: (accountSummary report: account).! !
 
-!AccountReportsTest methodsFor: 'accountSummaryTests' stamp: 'alm 11/18/2022 13:39:38'!
+!AccountReportsTest methodsFor: 'accountSummaryTests' stamp: 'alm 11/18/2022 14:28:34'!
 test02accountSummaryMuestraLosDepositosYExtraccionesRealizadosEnLaCuentaYSuBalance
 	
 	Deposit register: 100 * peso on: account.
 	Withdraw register: 60 * peso on: account.
 		
-	self assert: 'Depósito por 100 pesos', self newline, 'Extracción por 60 pesos',self newline, 'Balance = 40 pesos' equals: (accountSummary report: account).! !
+	self assert: 			'Depósito por 100 pesos', self newline,
+				'Extracción por 60 pesos',self newline,
+				'Balance = 40 pesos'
+		equals: (accountSummary report: account).! !
 
-!AccountReportsTest methodsFor: 'accountSummaryTests' stamp: 'alm 11/18/2022 13:42:51'!
+!AccountReportsTest methodsFor: 'accountSummaryTests' stamp: 'alm 11/18/2022 14:33:08'!
 test03accountSummaryMuestraLosDepositosYTransferenciasRealizadasPorLaCuentaYSuBalance
-	
-	Deposit register: 20*peso on: originAccount.
-	Transfer amount: 20 * peso from: originAccount to: destinationAccount.
-	
-	self assert: 'Depósito por 20 pesos',self newline,'Salida por transferencia de 20 pesos', self newline, 'Balance = 0 pesos' equals: (accountSummary report: originAccount).! !
 
-!AccountReportsTest methodsFor: 'accountSummaryTests' stamp: 'alm 11/18/2022 13:42:32'!
+	self deposit: 20*peso inOriginAndThenTransfer: 20*peso from: originAccount to: destinationAccount.
+	
+	self assert: 			'Depósito por 20 pesos',self newline,
+				'Salida por transferencia de 20 pesos', self newline,
+				'Balance = 0 pesos'
+		equals: (accountSummary report: originAccount).! !
+
+!AccountReportsTest methodsFor: 'accountSummaryTests' stamp: 'alm 11/18/2022 14:31:16'!
 test04accountSummaryMuestraLasTransferenciasRecibidasPorLaCuentaYSuBalance
 	
-	Deposit register: 30*peso on: originAccount.
-	Transfer amount: 30 * peso from: originAccount to: destinationAccount.
+	self deposit: 30*peso inOriginAndThenTransfer: 30*peso from: originAccount to: destinationAccount.
 		
-	self assert: 'Entrada por transferencia de 30 pesos',self newline, 'Balance = 30 pesos' equals: (accountSummary report: destinationAccount).! !
+	self assert: 			'Entrada por transferencia de 30 pesos',self newline,
+				'Balance = 30 pesos'
+		equals: (accountSummary report: destinationAccount).! !
 
 
 !AccountReportsTest methodsFor: 'setup' stamp: 'alm 11/18/2022 13:34:04'!
