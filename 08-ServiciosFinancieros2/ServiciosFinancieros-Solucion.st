@@ -1,87 +1,118 @@
-!classDefinition: #AccountSummaryTest category: 'ServiciosFinancieros-Solucion'!
-TestCase subclass: #AccountSummaryTest
-	instanceVariableNames: ''
+!classDefinition: #AccountReportsTest category: 'ServiciosFinancieros-Solucion'!
+TestCase subclass: #AccountReportsTest
+	instanceVariableNames: 'account originAccount destinationAccount transferNet accountSummary'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'ServiciosFinancieros-Solucion'!
 
-!AccountSummaryTest methodsFor: 'tests' stamp: 'alm 11/17/2022 22:13:29'!
+!AccountReportsTest methodsFor: 'accountSummaryTests' stamp: 'alm 11/17/2022 22:13:29'!
 newline
 
 	^ String newLineString! !
 
-!AccountSummaryTest methodsFor: 'tests' stamp: 'alm 11/18/2022 00:43:32'!
-test01
-	| account accountSummary |
-	account := ReceptiveAccount new.
+!AccountReportsTest methodsFor: 'accountSummaryTests' stamp: 'alm 11/18/2022 13:39:12'!
+test01accountSummaryMuestraLosDepositosRealizadosEnLaCuentaYSuBalance
+	
 	Deposit register: 100 * peso on: account.
 	
-	accountSummary := AccountSummary new.
 	self assert: 'Depósito por 100 pesos',self newline, 'Balance = 100 pesos' equals: (accountSummary report: account).! !
 
-!AccountSummaryTest methodsFor: 'tests' stamp: 'alm 11/18/2022 00:43:40'!
-test02
-	| account accountSummary |
-	account := ReceptiveAccount new.
+!AccountReportsTest methodsFor: 'accountSummaryTests' stamp: 'alm 11/18/2022 13:39:38'!
+test02accountSummaryMuestraLosDepositosYExtraccionesRealizadosEnLaCuentaYSuBalance
+	
 	Deposit register: 100 * peso on: account.
 	Withdraw register: 60 * peso on: account.
-	
-	accountSummary := AccountSummary new.
-	
+		
 	self assert: 'Depósito por 100 pesos', self newline, 'Extracción por 60 pesos',self newline, 'Balance = 40 pesos' equals: (accountSummary report: account).! !
 
-!AccountSummaryTest methodsFor: 'tests' stamp: 'alm 11/18/2022 00:43:51'!
-test03
-	| destinationAccount originAccount accountSummary |
+!AccountReportsTest methodsFor: 'accountSummaryTests' stamp: 'alm 11/18/2022 13:42:51'!
+test03accountSummaryMuestraLosDepositosYTransferenciasRealizadasPorLaCuentaYSuBalance
 	
-	originAccount := ReceptiveAccount new.	
-	destinationAccount := ReceptiveAccount new.
 	Deposit register: 20*peso on: originAccount.
 	Transfer amount: 20 * peso from: originAccount to: destinationAccount.
-
-	accountSummary := AccountSummary new.
 	
 	self assert: 'Depósito por 20 pesos',self newline,'Salida por transferencia de 20 pesos', self newline, 'Balance = 0 pesos' equals: (accountSummary report: originAccount).! !
 
-!AccountSummaryTest methodsFor: 'tests' stamp: 'alm 11/18/2022 00:44:16'!
-test04
-	| destinationAccount originAccount accountSummary |
+!AccountReportsTest methodsFor: 'accountSummaryTests' stamp: 'alm 11/18/2022 13:42:32'!
+test04accountSummaryMuestraLasTransferenciasRecibidasPorLaCuentaYSuBalance
 	
-	originAccount := ReceptiveAccount new.	
-	destinationAccount := ReceptiveAccount new.
 	Deposit register: 30*peso on: originAccount.
 	Transfer amount: 30 * peso from: originAccount to: destinationAccount.
-	
-	accountSummary := AccountSummary new.
-	
+		
 	self assert: 'Entrada por transferencia de 30 pesos',self newline, 'Balance = 30 pesos' equals: (accountSummary report: destinationAccount).! !
 
-!AccountSummaryTest methodsFor: 'tests' stamp: 'alm 11/18/2022 00:44:25'!
-test05
-"Transfer net"
-	| destinationAccount originAccount transferNet |
+
+!AccountReportsTest methodsFor: 'setup' stamp: 'alm 11/18/2022 13:34:04'!
+setUp
 	
+	account := ReceptiveAccount new.
 	originAccount := ReceptiveAccount new.	
 	destinationAccount := ReceptiveAccount new.
+	
+	accountSummary := AccountSummary new.
+	transferNet := TransferNet new.! !
+
+
+!AccountReportsTest methodsFor: 'transferNetTests' stamp: 'alm 11/18/2022 13:43:33'!
+test05transferNetMuestraSolamenteLasTransferenciasRecibidasYRealizadasPorLaCuenta
+	
 	Deposit register: 100*peso on: originAccount.
 	Transfer amount: 30 * peso from: destinationAccount to: originAccount.
 	Transfer amount: 20 * peso from: originAccount to: destinationAccount.
 	
-	transferNet := TransferNet new.
 	self assert: 		'Entrada por transferencia de 30 pesos',self newline,
 			'Salida por transferencia de 20 pesos', self newline,
 			'Neto = 10 pesos' 
 		equals: (transferNet report: originAccount).! !
 
 
-!classDefinition: #PortfolioDetailedTreePrinterTest category: 'ServiciosFinancieros-Solucion'!
-TestCase subclass: #PortfolioDetailedTreePrinterTest
-	instanceVariableNames: 'johnsAccount angiesAccount myAccount portfolioDetailedTreePrinter'
+!classDefinition: #PortfolioPrinterTest category: 'ServiciosFinancieros-Solucion'!
+TestCase subclass: #PortfolioPrinterTest
+	instanceVariableNames: 'johnsAccount angiesAccount myAccount portfolioTreePrint portfolioDetailedTreePrinter'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'ServiciosFinancieros-Solucion'!
 
-!PortfolioDetailedTreePrinterTest methodsFor: 'expectedReports' stamp: 'alm 11/18/2022 01:12:41'!
+!PortfolioPrinterTest methodsFor: 'portfolioTreePrinterTests' stamp: 'alm 11/18/2022 01:18:42'!
+composedPortfolioTreeReport
+
+	^ 'Portfolio de la familia',(String newLineString),
+				'   Cuenta mia',(String newLineString),
+				'   Portfolio de hijos',(String newLineString),
+				'      Cuenta de Juan',(String newLineString),
+				'      Cuenta de Angeles'! !
+
+!PortfolioPrinterTest methodsFor: 'portfolioTreePrinterTests' stamp: 'alm 11/18/2022 01:17:40'!
+simplePortfolioTreeReport
+
+	^ 'Portfolio de la familia',(String newLineString),
+				'   Cuenta mia'! !
+
+!PortfolioPrinterTest methodsFor: 'portfolioTreePrinterTests' stamp: 'alm 11/18/2022 14:06:19'!
+test01portfolioTreePrintShowsNamesOfPortfolioAndItsReceptiveAccountsInATreeLikeStructure
+	
+	| familyPortfolio |
+
+	familyPortfolio := Portfolio named: 'Portfolio de la familia' with: myAccount..
+	
+	portfolioTreePrint := PortfolioTreePrinter for: familyPortfolio.
+	self assert: 		self simplePortfolioTreeReport
+		equals: (portfolioTreePrint report).! !
+
+!PortfolioPrinterTest methodsFor: 'portfolioTreePrinterTests' stamp: 'alm 11/18/2022 14:08:58'!
+test02portfolioTreePrintShowsNamesOfPortfolioAndItsAccountsInATreeLikeStructure
+
+	| familyPortfolio childrenPortfolio |
+	
+	childrenPortfolio := Portfolio named: 'Portfolio de hijos' with: johnsAccount with: angiesAccount.
+	familyPortfolio := Portfolio named: 'Portfolio de la familia' with: myAccount with: childrenPortfolio.
+	
+	portfolioTreePrint := PortfolioTreePrinter for: familyPortfolio.
+	self assert: 		self composedPortfolioTreeReport
+		equals: (portfolioTreePrint report).! !
+
+
+!PortfolioPrinterTest methodsFor: 'portfolioDetailedPrinterTests' stamp: 'alm 11/18/2022 13:48:08'!
 composedPortfolioDetailedTreeReport
 
 	^ 'Portfolio de la familia',(String newLineString),
@@ -100,7 +131,12 @@ composedPortfolioDetailedTreeReport
 			'      Balance = 20 pesos',(String newLineString),
 			'   Balance = 70 pesos'! !
 
-!PortfolioDetailedTreePrinterTest methodsFor: 'expectedReports' stamp: 'alm 11/18/2022 01:11:14'!
+!PortfolioPrinterTest methodsFor: 'portfolioDetailedPrinterTests' stamp: 'alm 11/18/2022 13:49:08'!
+deposit: anAmountToDeposit andThenWithdraw: anAmountToWithdraw on: aReceptiveAccount 
+	Deposit register: anAmountToDeposit on: aReceptiveAccount.
+	Withdraw register: anAmountToWithdraw on: aReceptiveAccount.! !
+
+!PortfolioPrinterTest methodsFor: 'portfolioDetailedPrinterTests' stamp: 'alm 11/18/2022 13:48:32'!
 simplePorfolioDetailedTreeReport
 
 	^ 'Portfolio de la familia',(String newLineString),
@@ -110,47 +146,21 @@ simplePorfolioDetailedTreeReport
 			'      Balance = 50 pesos',(String newLineString),
 			'   Balance = 50 pesos'! !
 
+!PortfolioPrinterTest methodsFor: 'portfolioDetailedPrinterTests' stamp: 'alm 11/18/2022 14:10:10'!
+test01detailedPrinterMuestraReporteDetalladoDeUnPortfolioConUnaCuenta
 
-!PortfolioDetailedTreePrinterTest methodsFor: 'setUp' stamp: 'alm 11/18/2022 01:24:23'!
-setUp
-
-	johnsAccount := ReceptiveAccount named: 'Cuenta de Juan'.
-	angiesAccount := ReceptiveAccount named: 'Cuenta de Angeles'. 
-	
-	myAccount := ReceptiveAccount named: 'Cuenta mia'. 
-	
-	portfolioDetailedTreePrinter := PortfolioDetailedTreePrinter new.! !
-
-
-!PortfolioDetailedTreePrinterTest methodsFor: 'tests' stamp: 'alm 11/18/2022 01:00:56'!
-createFamilyPortfolioTree
-	"| angiesAccount childrenPortfolio familyPortfolio johnsAccount myAccount |
-	johnsAccount := ReceptiveAccount named: 'Cuenta de Juan'.
-	angiesAccount := ReceptiveAccount named: 'Cuenta de Angeles'. 
-	childrenPortfolio := Portfolio named: 'Portfolio de hijos' with: johnsAccount with: angiesAccount.
-	myAccount := ReceptiveAccount named: 'Cuenta mia'. 
-	familyPortfolio := Portfolio named: 'Portfolio de la familia' with: myAccount with: childrenPortfolio.
-	^ familyPortfolio."! !
-
-!PortfolioDetailedTreePrinterTest methodsFor: 'tests' stamp: 'alm 11/18/2022 01:32:49'!
-deposit: anAmountToDeposit andThenWithdraw: anAmountToWithdraw on: aReceptiveAccount 
-	Deposit register: anAmountToDeposit on: aReceptiveAccount.
-	Withdraw register: anAmountToWithdraw on: aReceptiveAccount.! !
-
-!PortfolioDetailedTreePrinterTest methodsFor: 'tests' stamp: 'alm 11/18/2022 01:34:13'!
-test01
-	
 	| familyPortfolio |
 	familyPortfolio := Portfolio named: 'Portfolio de la familia' with: myAccount..
 	
 	self deposit: 100*peso andThenWithdraw: 50*peso on: myAccount.
 	
+	portfolioDetailedTreePrinter := PortfolioDetailedTreePrinter for: familyPortfolio.
 	self assert: self simplePorfolioDetailedTreeReport
-		equals: (portfolioDetailedTreePrinter report: familyPortfolio).! !
+		equals: (portfolioDetailedTreePrinter report).! !
 
-!PortfolioDetailedTreePrinterTest methodsFor: 'tests' stamp: 'alm 11/18/2022 01:33:17'!
-test02
-	
+!PortfolioPrinterTest methodsFor: 'portfolioDetailedPrinterTests' stamp: 'alm 11/18/2022 14:10:30'!
+test02detailedPrinterMuestraReporteDeUnPortolioYSuArbolDePortfolioYCuentas
+
 	| familyPortfolio destinationAccount childrenPortfolio |
 	childrenPortfolio := Portfolio named: 'Portfolio de hijos' with: johnsAccount with: angiesAccount.
 	familyPortfolio := Portfolio named: 'Portfolio de la familia' with: myAccount with: childrenPortfolio.
@@ -160,8 +170,18 @@ test02
 	self deposit: 100*peso andThenWithdraw: 60*peso on: johnsAccount.
 	Transfer amount: 20*peso from: angiesAccount to: destinationAccount.
 
+	portfolioDetailedTreePrinter := PortfolioDetailedTreePrinter for: familyPortfolio.
 	self assert: self composedPortfolioDetailedTreeReport
-		equals: (portfolioDetailedTreePrinter report: familyPortfolio).! !
+		equals: (portfolioDetailedTreePrinter report).! !
+
+
+!PortfolioPrinterTest methodsFor: 'setUp' stamp: 'alm 11/18/2022 14:11:38'!
+setUp
+	
+	johnsAccount := ReceptiveAccount named: 'Cuenta de Juan'.
+	angiesAccount := ReceptiveAccount named: 'Cuenta de Angeles'. 
+	myAccount := ReceptiveAccount named: 'Cuenta mia'.
+	! !
 
 
 !classDefinition: #PortfolioTest category: 'ServiciosFinancieros-Solucion'!
@@ -272,61 +292,6 @@ test09PortfolioTransactionsAreCalculatedRecursively
 	self assert: 2 equals: composedPortfolioTransactions size.
 	self assert: (composedPortfolioTransactions includes: simplePortfolioAccountDeposit).
 	self assert: (composedPortfolioTransactions includes: composedPortfolioAccountWithdraw)! !
-
-
-!classDefinition: #PortfolioTreePrinterTest category: 'ServiciosFinancieros-Solucion'!
-TestCase subclass: #PortfolioTreePrinterTest
-	instanceVariableNames: 'johnsAccount angiesAccount myAccount portfolioTreePrint'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'ServiciosFinancieros-Solucion'!
-
-!PortfolioTreePrinterTest methodsFor: 'tests' stamp: 'alm 11/18/2022 01:34:36'!
-test01portfolioTreePrintShowsNamesOfPortfolioAndItsAccountsInATreeLikeStructure
-	
-	| familyPortfolio |
-
-	familyPortfolio := Portfolio named: 'Portfolio de la familia' with: myAccount..
-		
-	self assert: 		self simplePortfolioTreeReport
-		equals: (portfolioTreePrint report: familyPortfolio ).! !
-
-!PortfolioTreePrinterTest methodsFor: 'tests' stamp: 'alm 11/18/2022 01:21:44'!
-test02
-
-	| familyPortfolio childrenPortfolio |
-	
-	childrenPortfolio := Portfolio named: 'Portfolio de hijos' with: johnsAccount with: angiesAccount.
-	familyPortfolio := Portfolio named: 'Portfolio de la familia' with: myAccount with: childrenPortfolio.
-	
-	self assert: 		self composedPortfolioTreeReport
-		equals: (portfolioTreePrint report: familyPortfolio).! !
-
-
-!PortfolioTreePrinterTest methodsFor: 'expectedReports' stamp: 'alm 11/18/2022 01:18:42'!
-composedPortfolioTreeReport
-
-	^ 'Portfolio de la familia',(String newLineString),
-				'   Cuenta mia',(String newLineString),
-				'   Portfolio de hijos',(String newLineString),
-				'      Cuenta de Juan',(String newLineString),
-				'      Cuenta de Angeles'! !
-
-!PortfolioTreePrinterTest methodsFor: 'expectedReports' stamp: 'alm 11/18/2022 01:17:40'!
-simplePortfolioTreeReport
-
-	^ 'Portfolio de la familia',(String newLineString),
-				'   Cuenta mia'! !
-
-
-!PortfolioTreePrinterTest methodsFor: 'setUp' stamp: 'alm 11/18/2022 01:20:03'!
-setUp
-	
-	johnsAccount := ReceptiveAccount named: 'Cuenta de Juan'.
-	angiesAccount := ReceptiveAccount named: 'Cuenta de Angeles'. 
-	myAccount := ReceptiveAccount named: 'Cuenta mia'. 
-	
-	portfolioTreePrint := PortfolioTreePrinter new.! !
 
 
 !classDefinition: #ReceptiveAccountTest category: 'ServiciosFinancieros-Solucion'!
@@ -579,10 +544,10 @@ Account subclass: #Portfolio
 	poolDictionaries: ''
 	category: 'ServiciosFinancieros-Solucion'!
 
-!Portfolio methodsFor: 'initialization' stamp: 'LL 7/1/2021 03:21:03'!
+!Portfolio methodsFor: 'initialization' stamp: 'alm 11/18/2022 14:16:41'!
 initialize
-
-	accounts := OrderedCollection new.! !
+	accounts := OrderedCollection new.
+	name := 'anonymousPortfolio'! !
 
 !Portfolio methodsFor: 'initialization' stamp: 'alm 11/18/2022 02:37:31'!
 initializeNamed: aPortfolioName with: aReceptiveAccount 
@@ -590,11 +555,9 @@ initializeNamed: aPortfolioName with: aReceptiveAccount
 	name := aPortfolioName.
 	accounts add: aReceptiveAccount.! !
 
-!Portfolio methodsFor: 'initialization' stamp: 'alm 11/18/2022 02:38:27'!
+!Portfolio methodsFor: 'initialization' stamp: 'alm 11/18/2022 14:16:12'!
 initializeNamed: aPortfolioName with: anAccount with: anotherAccount
-	self initialize.
-	name := aPortfolioName.
-	accounts add: anAccount.
+	self initializeNamed: aPortfolioName with: anAccount. 
 	accounts add: anotherAccount.! !
 
 
@@ -679,14 +642,16 @@ Account subclass: #ReceptiveAccount
 	poolDictionaries: ''
 	category: 'ServiciosFinancieros-Solucion'!
 
-!ReceptiveAccount methodsFor: 'initialization' stamp: 'HernanWilkinson 7/13/2011 18:35'!
+!ReceptiveAccount methodsFor: 'initialization' stamp: 'alm 11/18/2022 14:19:58'!
 initialize
 
-	super initialize.
-	transactions := OrderedCollection new.! !
+	transactions := OrderedCollection new.
+	name := 'anonymousReceptiveAccount'! !
 
-!ReceptiveAccount methodsFor: 'initialization' stamp: 'alm 11/16/2022 22:49:07'!
+!ReceptiveAccount methodsFor: 'initialization' stamp: 'alm 11/18/2022 14:21:28'!
 initializeNamed: aName 
+
+	self initialize.
 	name := aName.! !
 
 
@@ -1072,15 +1037,15 @@ for: aValue
 
 !classDefinition: #PortfolioPrinter category: 'ServiciosFinancieros-Solucion'!
 Object subclass: #PortfolioPrinter
-	instanceVariableNames: 'reporteAMostrar'
+	instanceVariableNames: 'reporteAMostrar portfolio'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'ServiciosFinancieros-Solucion'!
 
-!PortfolioPrinter methodsFor: 'reporting' stamp: 'alm 11/18/2022 03:48:49'!
-report: aPortfolio 
+!PortfolioPrinter methodsFor: 'reporting' stamp: 'alm 11/18/2022 14:08:20'!
+report
 	
-	aPortfolio report: self with: ''.
+	portfolio report: self with: ''.
 	^ reporteAMostrar.! !
 
 !PortfolioPrinter methodsFor: 'reporting' stamp: 'alm 11/18/2022 03:22:47'!
@@ -1102,8 +1067,9 @@ subreportReceptiveAccount: aReceptiveAccount with: anInitialIndentation
 ! !
 
 
-!PortfolioPrinter methodsFor: 'initialization' stamp: 'alm 11/18/2022 01:39:42'!
-initialize
+!PortfolioPrinter methodsFor: 'initialization' stamp: 'alm 11/18/2022 14:07:42'!
+initializeFor: aPortfolio 
+	portfolio := aPortfolio.
 	reporteAMostrar := ''.! !
 
 
@@ -1115,6 +1081,16 @@ add: anAccountName
 newline
 
 	^ String newLineString! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'PortfolioPrinter class' category: 'ServiciosFinancieros-Solucion'!
+PortfolioPrinter class
+	instanceVariableNames: ''!
+
+!PortfolioPrinter class methodsFor: 'instance creation' stamp: 'alm 11/18/2022 14:06:56'!
+for: aPortfolio 
+	^self new initializeFor: aPortfolio ! !
 
 
 !classDefinition: #PortfolioDetailedTreePrinter category: 'ServiciosFinancieros-Solucion'!
