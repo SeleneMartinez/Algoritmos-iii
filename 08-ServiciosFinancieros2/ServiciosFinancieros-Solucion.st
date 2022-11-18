@@ -11,7 +11,7 @@ deposit: anAmountToDeposit inOriginAndThenTransfer: anAmountToTransfer from: anO
 	Deposit register: anAmountToDeposit on: anOriginAccount.
 	Transfer amount: anAmountToTransfer from: anOriginAccount to: aDestinationAccount.! !
 
-!AccountReportsTest methodsFor: 'accountSummaryTests' stamp: 'alm 11/17/2022 22:13:29'!
+!AccountReportsTest methodsFor: 'accountSummaryTests' stamp: 'alm 11/18/2022 16:58:50'!
 newline
 
 	^ String newLineString! !
@@ -717,9 +717,9 @@ Object subclass: #AccountReport
 	poolDictionaries: ''
 	category: 'ServiciosFinancieros-Solucion'!
 
-!AccountReport methodsFor: 'initialization' stamp: 'alm 11/17/2022 22:33:23'!
+!AccountReport methodsFor: 'initialization' stamp: 'alm 11/18/2022 16:45:26'!
 initialize
-	reporteAMostrar := ''.
+	reporteAMostrar := ReporteAMostrar new.
 	resultadoAcumulado := 0.! !
 
 
@@ -739,15 +739,10 @@ addTransferWithdrawLeg: aTransferWithdrawLeg
 addWithdraw: aWithdraw
 	^ self subclassResponsibility ! !
 
-!AccountReport methodsFor: 'main protocol' stamp: 'alm 11/16/2022 23:40:36'!
+!AccountReport methodsFor: 'main protocol' stamp: 'alm 11/18/2022 16:57:54'!
 report: anAccount
-	self subclassResponsibility ! !
+	^ self subclassResponsibility ! !
 
-
-!AccountReport methodsFor: 'private' stamp: 'alm 11/17/2022 22:16:11'!
-newline
-
-	^ String newLineString.! !
 
 !AccountReport methodsFor: 'private' stamp: 'alm 11/17/2022 22:35:00'!
 resultadoAcumuladoForReport
@@ -762,35 +757,29 @@ AccountReport subclass: #AccountSummary
 	poolDictionaries: ''
 	category: 'ServiciosFinancieros-Solucion'!
 
-!AccountSummary methodsFor: 'main protocol' stamp: 'alm 11/17/2022 22:24:28'!
+!AccountSummary methodsFor: 'main protocol' stamp: 'alm 11/18/2022 16:49:50'!
 addDeposit: aDeposit
-	reporteAMostrar := reporteAMostrar,
-					'Depósito por ',aDeposit valueForReport,' pesos',
-					self newline.! !
+	reporteAMostrar addLine: 	'Depósito por ',aDeposit valueForReport,' pesos'.! !
 
-!AccountSummary methodsFor: 'main protocol' stamp: 'alm 11/17/2022 22:24:52'!
+!AccountSummary methodsFor: 'main protocol' stamp: 'alm 11/18/2022 16:45:56'!
 addTransferDepositLeg: aTransferDepositLeg
-	reporteAMostrar := reporteAMostrar,
-					'Entrada por transferencia de ', aTransferDepositLeg valueForReport, ' pesos',
-					self newline.! !
+	reporteAMostrar addLine:					'Entrada por transferencia de ', aTransferDepositLeg valueForReport, ' pesos'.! !
 
-!AccountSummary methodsFor: 'main protocol' stamp: 'alm 11/17/2022 22:24:58'!
+!AccountSummary methodsFor: 'main protocol' stamp: 'alm 11/18/2022 16:46:20'!
 addTransferWithdrawLeg: aTransferWithdrawLeg
-	reporteAMostrar := reporteAMostrar,
-					'Salida por transferencia de ', aTransferWithdrawLeg valueForReport, ' pesos',
-					self newline.! !
+	reporteAMostrar addLine:				'Salida por transferencia de ', aTransferWithdrawLeg valueForReport, ' pesos'.! !
 
-!AccountSummary methodsFor: 'main protocol' stamp: 'alm 11/17/2022 22:25:06'!
+!AccountSummary methodsFor: 'main protocol' stamp: 'alm 11/18/2022 16:46:35'!
 addWithdraw: aWithdraw
-	reporteAMostrar := reporteAMostrar,'Extracción por ',aWithdraw valueForReport,' pesos', self newline.! !
+	reporteAMostrar addLine: 'Extracción por ',aWithdraw valueForReport,' pesos'.! !
 
-!AccountSummary methodsFor: 'main protocol' stamp: 'alm 11/17/2022 22:34:36'!
+!AccountSummary methodsFor: 'main protocol' stamp: 'alm 11/18/2022 16:57:18'!
 report: anAccount
 	
-	anAccount transactions do: [:transaction | (transaction report: self)].
+	anAccount transactions do: [:transaction | transaction report: self].
 	resultadoAcumulado := anAccount balance.
-	 ^reporteAMostrar , 'Balance = ',self resultadoAcumuladoForReport,' pesos'.
-! !
+	reporteAMostrar addLine: 'Balance = ',self resultadoAcumuladoForReport,' pesos'.
+	^ reporteAMostrar print.! !
 
 
 !classDefinition: #TransferNet category: 'ServiciosFinancieros-Solucion'!
@@ -804,34 +793,28 @@ AccountReport subclass: #TransferNet
 addDeposit: aDeposit
 	! !
 
-!TransferNet methodsFor: 'main protocol' stamp: 'alm 11/17/2022 22:32:08'!
+!TransferNet methodsFor: 'main protocol' stamp: 'alm 11/18/2022 16:53:34'!
 addTransferDepositLeg: aTransferDepositLeg
 	
 	resultadoAcumulado := aTransferDepositLeg affectBalance: resultadoAcumulado.
-	reporteAMostrar := reporteAMostrar,
-					'Entrada por transferencia de ', aTransferDepositLeg valueForReport, ' pesos',
-					self newline.
+	reporteAMostrar addLine: 'Entrada por transferencia de ', aTransferDepositLeg valueForReport, ' pesos'.
 	! !
 
-!TransferNet methodsFor: 'main protocol' stamp: 'alm 11/17/2022 22:32:08'!
+!TransferNet methodsFor: 'main protocol' stamp: 'alm 11/18/2022 16:53:45'!
 addTransferWithdrawLeg: aTransferWithdrawLeg
 
 	resultadoAcumulado := aTransferWithdrawLeg affectBalance: resultadoAcumulado.
-	reporteAMostrar := reporteAMostrar ,
-					'Salida por transferencia de ', aTransferWithdrawLeg valueForReport, ' pesos',
-					self newline.! !
+	reporteAMostrar addLine: 'Salida por transferencia de ', aTransferWithdrawLeg valueForReport, ' pesos'.! !
 
 !TransferNet methodsFor: 'main protocol' stamp: 'alm 11/17/2022 22:23:20'!
 addWithdraw: aWithdraw! !
 
-!TransferNet methodsFor: 'main protocol' stamp: 'alm 11/17/2022 22:34:08'!
+!TransferNet methodsFor: 'main protocol' stamp: 'alm 11/18/2022 16:56:35'!
 report: anAccount
 	
-	anAccount transactions do: [:transaction | 
-				transaction report: self.
-				].
-	^ reporteAMostrar , 'Neto = ',self resultadoAcumuladoForReport,' pesos'.
-	! !
+	anAccount transactions do: [:transaction | 	transaction report: self.	].
+	reporteAMostrar addLine: 'Neto = ',self resultadoAcumuladoForReport,' pesos'.
+	^ reporteAMostrar print.	! !
 
 
 !classDefinition: #AccountTransaction category: 'ServiciosFinancieros-Solucion'!
@@ -1051,38 +1034,37 @@ Object subclass: #PortfolioPrinter
 	poolDictionaries: ''
 	category: 'ServiciosFinancieros-Solucion'!
 
-!PortfolioPrinter methodsFor: 'reporting' stamp: 'alm 11/18/2022 15:39:14'!
+!PortfolioPrinter methodsFor: 'reporting' stamp: 'alm 11/18/2022 16:44:05'!
 report
 	
 	portfolio report: self.
-	^ reporteAMostrar.! !
+	^ reporteAMostrar print.! !
 
-!PortfolioPrinter methodsFor: 'reporting' stamp: 'alm 11/18/2022 15:33:13'!
+!PortfolioPrinter methodsFor: 'reporting' stamp: 'alm 11/18/2022 16:36:54'!
 subreportPortfolio: aPortfolio
 	
 	self add: indentation ,aPortfolio name.
 	self increaseIndentation.
-	aPortfolio accounts do: [:anAccount | self add: self newline.
-						anAccount report: self.].
+	aPortfolio accounts do: [:anAccount | anAccount report: self.].
 	self decreaseIndentation.! !
 
-!PortfolioPrinter methodsFor: 'reporting' stamp: 'alm 11/18/2022 15:24:07'!
+!PortfolioPrinter methodsFor: 'reporting' stamp: 'alm 11/18/2022 16:37:07'!
 subreportReceptiveAccount: aReceptiveAccount
-
+	
 	self add: indentation,aReceptiveAccount name.
 ! !
 
 
-!PortfolioPrinter methodsFor: 'initialization' stamp: 'alm 11/18/2022 15:06:34'!
+!PortfolioPrinter methodsFor: 'initialization' stamp: 'alm 11/18/2022 16:43:14'!
 initializeFor: aPortfolio 
 	portfolio := aPortfolio.
-	reporteAMostrar := ''.
+	reporteAMostrar := ReporteAMostrar new.
 	indentation := ''.! !
 
 
-!PortfolioPrinter methodsFor: 'private' stamp: 'alm 11/18/2022 01:40:04'!
-add: anAccountName
-	reporteAMostrar := reporteAMostrar,anAccountName.! !
+!PortfolioPrinter methodsFor: 'private' stamp: 'alm 11/18/2022 16:38:31'!
+add: aLineToAddToTheReport
+	reporteAMostrar := reporteAMostrar addLine: aLineToAddToTheReport.! !
 
 !PortfolioPrinter methodsFor: 'private' stamp: 'alm 11/18/2022 15:32:33'!
 decreaseIndentation
@@ -1098,11 +1080,6 @@ increaseIndentation
 moreIndentation
 
 	^ '   '! !
-
-!PortfolioPrinter methodsFor: 'private' stamp: 'alm 11/17/2022 22:12:07'!
-newline
-
-	^ String newLineString! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -1126,19 +1103,19 @@ PortfolioPrinter subclass: #PortfolioDetailedTreePrinter
 balanceString: aPortfolio
 	^ 'Balance = ',(aPortfolio balance amount) asString,' pesos'! !
 
-!PortfolioDetailedTreePrinter methodsFor: 'private' stamp: 'alm 11/18/2022 15:37:51'!
+!PortfolioDetailedTreePrinter methodsFor: 'private' stamp: 'alm 11/18/2022 17:00:46'!
 concatSummary: reporteDeTransaccionesAConcatenar
+	
+	reporteDeTransaccionesAConcatenar print linesDo: [:line |
+		self add: indentation, self moreIndentation,line.]! !
 
-	reporteDeTransaccionesAConcatenar linesDo: [:line |
-		self add: self newline, indentation, self moreIndentation,line.]! !
 
-
-!PortfolioDetailedTreePrinter methodsFor: 'reporting' stamp: 'alm 11/18/2022 15:25:26'!
+!PortfolioDetailedTreePrinter methodsFor: 'reporting' stamp: 'alm 11/18/2022 16:37:18'!
 subreportPortfolio: aPortfolio
 	
 	super subreportPortfolio: aPortfolio.
 	
-	self add: self newline,indentation,self moreIndentation,(self balanceString: aPortfolio).! !
+	self add: indentation,self moreIndentation,(self balanceString: aPortfolio).! !
 
 !PortfolioDetailedTreePrinter methodsFor: 'reporting' stamp: 'alm 11/18/2022 15:37:12'!
 subreportReceptiveAccount: aReceptiveAccount
@@ -1168,6 +1145,28 @@ subreportPortfolio: aPortfolio
 subreportReceptiveAccount: aReceptiveAccount
 	
 	super subreportReceptiveAccount: aReceptiveAccount! !
+
+
+!classDefinition: #ReporteAMostrar category: 'ServiciosFinancieros-Solucion'!
+Object subclass: #ReporteAMostrar
+	instanceVariableNames: 'stringAMostrar'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'ServiciosFinancieros-Solucion'!
+
+!ReporteAMostrar methodsFor: 'as yet unclassified' stamp: 'alm 11/18/2022 16:39:42'!
+addLine: aLineToAdd
+	stringAMostrar := stringAMostrar, (String newLineString), aLineToAdd.! !
+
+!ReporteAMostrar methodsFor: 'as yet unclassified' stamp: 'alm 11/18/2022 16:41:10'!
+print
+	"Pequeño ajuste, porque addLine siempre agrega un newline al principio (incluyendo la primera vez que se lo llama)"
+	^ stringAMostrar allButFirst.! !
+
+
+!ReporteAMostrar methodsFor: 'initialization' stamp: 'alm 11/18/2022 16:20:50'!
+initialize
+	stringAMostrar := ''.! !
 
 
 !classDefinition: #Transfer category: 'ServiciosFinancieros-Solucion'!
