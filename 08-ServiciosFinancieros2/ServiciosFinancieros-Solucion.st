@@ -160,20 +160,20 @@ simplePorfolioDetailedTreeReport
 			'      Balance = 50 pesos',(String newLineString),
 			'   Balance = 50 pesos'! !
 
-!PortfolioPrinterTest methodsFor: 'portfolioDetailedPrinterTests' stamp: 'alm 11/18/2022 14:10:10'!
-test01detailedPrinterMuestraReporteDetalladoDeUnPortfolioConUnaCuenta
+!PortfolioPrinterTest methodsFor: 'portfolioDetailedPrinterTests' stamp: 'alm 11/18/2022 15:43:15'!
+test03detailedPrinterMuestraReporteDetalladoDeUnPortfolioConUnaCuenta
 
 	| familyPortfolio |
 	familyPortfolio := Portfolio named: 'Portfolio de la familia' with: myAccount..
 	
 	self deposit: 100*peso andThenWithdraw: 50*peso on: myAccount.
-	
+
 	portfolioDetailedTreePrinter := PortfolioDetailedTreePrinter for: familyPortfolio.
 	self assert: self simplePorfolioDetailedTreeReport
 		equals: (portfolioDetailedTreePrinter report).! !
 
-!PortfolioPrinterTest methodsFor: 'portfolioDetailedPrinterTests' stamp: 'alm 11/18/2022 14:10:30'!
-test02detailedPrinterMuestraReporteDeUnPortolioYSuArbolDePortfolioYCuentas
+!PortfolioPrinterTest methodsFor: 'portfolioDetailedPrinterTests' stamp: 'alm 11/18/2022 15:43:00'!
+test04detailedPrinterMuestraReporteDeUnPortolioYSuArbolDePortfolioYCuentas
 
 	| familyPortfolio destinationAccount childrenPortfolio |
 	childrenPortfolio := Portfolio named: 'Portfolio de hijos' with: johnsAccount with: angiesAccount.
@@ -525,11 +525,6 @@ report: aPortfolioPrinter
 
 	self subclassResponsibility.! !
 
-!Account methodsFor: 'main protocol' stamp: 'alm 11/17/2022 21:49:41'!
-report: aPortfolioPrinter with: anInitialIndentation 
-
-	self subclassResponsibility.! !
-
 !Account methodsFor: 'main protocol' stamp: 'HAW 5/25/2019 12:23:15'!
 transactions
 
@@ -585,10 +580,10 @@ hasRegistered: aTransaction
 
 	^accounts anySatisfy: [ :anAccount | anAccount hasRegistered: aTransaction ]! !
 
-!Portfolio methodsFor: 'main protocol' stamp: 'alm 11/17/2022 21:47:54'!
-report: aPortfolioPrinter with: anInitialIndentation 
+!Portfolio methodsFor: 'main protocol' stamp: 'alm 11/18/2022 15:33:19'!
+report: aPortfolioPrinter
 	
-	aPortfolioPrinter subreportPortfolio: self with: anInitialIndentation.! !
+	aPortfolioPrinter subreportPortfolio: self. "with: anInitialIndentation."! !
 
 !Portfolio methodsFor: 'main protocol' stamp: 'HAW 5/25/2019 11:38:32'!
 transactions
@@ -688,10 +683,10 @@ register: aTransaction
 	transactions add: aTransaction 
 ! !
 
-!ReceptiveAccount methodsFor: 'main protocol' stamp: 'alm 11/17/2022 21:49:02'!
-report: aPortfolioPrinter with: anInitialIndentation 
+!ReceptiveAccount methodsFor: 'main protocol' stamp: 'alm 11/18/2022 15:33:27'!
+report: aPortfolioPrinter
 	
-	aPortfolioPrinter subreportReceptiveAccount: self with: anInitialIndentation.! !
+	aPortfolioPrinter subreportReceptiveAccount: self. "with: anInitialIndentation."! !
 
 !ReceptiveAccount methodsFor: 'main protocol' stamp: 'HernanWilkinson 7/13/2011 18:37'!
 transactions 
@@ -1051,45 +1046,58 @@ for: aValue
 
 !classDefinition: #PortfolioPrinter category: 'ServiciosFinancieros-Solucion'!
 Object subclass: #PortfolioPrinter
-	instanceVariableNames: 'reporteAMostrar portfolio'
+	instanceVariableNames: 'reporteAMostrar portfolio indentation'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'ServiciosFinancieros-Solucion'!
 
-!PortfolioPrinter methodsFor: 'reporting' stamp: 'alm 11/18/2022 14:47:49'!
-moreIndentation
-
-	^ '   '! !
-
-!PortfolioPrinter methodsFor: 'reporting' stamp: 'alm 11/18/2022 14:08:20'!
+!PortfolioPrinter methodsFor: 'reporting' stamp: 'alm 11/18/2022 15:39:14'!
 report
 	
-	portfolio report: self with: ''.
+	portfolio report: self.
 	^ reporteAMostrar.! !
 
-!PortfolioPrinter methodsFor: 'reporting' stamp: 'alm 11/18/2022 14:48:05'!
-subreportPortfolio: aPortfolio with: anInitialIndentation
+!PortfolioPrinter methodsFor: 'reporting' stamp: 'alm 11/18/2022 15:33:13'!
+subreportPortfolio: aPortfolio
 	
-	self add: anInitialIndentation,aPortfolio name.
+	self add: indentation ,aPortfolio name.
+	self increaseIndentation.
 	aPortfolio accounts do: [:anAccount | self add: self newline.
-						anAccount report: self with: anInitialIndentation,self moreIndentation .].! !
+						anAccount report: self.].
+	self decreaseIndentation.! !
 
-!PortfolioPrinter methodsFor: 'reporting' stamp: 'alm 11/17/2022 21:24:10'!
-subreportReceptiveAccount: aReceptiveAccount with: anInitialIndentation
-	
-	self add: anInitialIndentation,aReceptiveAccount name.
+!PortfolioPrinter methodsFor: 'reporting' stamp: 'alm 11/18/2022 15:24:07'!
+subreportReceptiveAccount: aReceptiveAccount
+
+	self add: indentation,aReceptiveAccount name.
 ! !
 
 
-!PortfolioPrinter methodsFor: 'initialization' stamp: 'alm 11/18/2022 14:07:42'!
+!PortfolioPrinter methodsFor: 'initialization' stamp: 'alm 11/18/2022 15:06:34'!
 initializeFor: aPortfolio 
 	portfolio := aPortfolio.
-	reporteAMostrar := ''.! !
+	reporteAMostrar := ''.
+	indentation := ''.! !
 
 
 !PortfolioPrinter methodsFor: 'private' stamp: 'alm 11/18/2022 01:40:04'!
 add: anAccountName
 	reporteAMostrar := reporteAMostrar,anAccountName.! !
+
+!PortfolioPrinter methodsFor: 'private' stamp: 'alm 11/18/2022 15:32:33'!
+decreaseIndentation
+
+	^ indentation := indentation copyFrom: 1 to: indentation size-3! !
+
+!PortfolioPrinter methodsFor: 'private' stamp: 'alm 11/18/2022 15:32:19'!
+increaseIndentation
+
+	^ indentation := indentation,self moreIndentation! !
+
+!PortfolioPrinter methodsFor: 'private' stamp: 'alm 11/18/2022 14:47:49'!
+moreIndentation
+
+	^ '   '! !
 
 !PortfolioPrinter methodsFor: 'private' stamp: 'alm 11/17/2022 22:12:07'!
 newline
@@ -1118,24 +1126,30 @@ PortfolioPrinter subclass: #PortfolioDetailedTreePrinter
 balanceString: aPortfolio
 	^ 'Balance = ',(aPortfolio balance amount) asString,' pesos'! !
 
+!PortfolioDetailedTreePrinter methodsFor: 'private' stamp: 'alm 11/18/2022 15:37:51'!
+concatSummary: reporteDeTransaccionesAConcatenar
 
-!PortfolioDetailedTreePrinter methodsFor: 'reporting' stamp: 'alm 11/18/2022 14:44:22'!
-subreportPortfolio: aPortfolio with: anInitialIndentation
-	
-	super subreportPortfolio: aPortfolio with: anInitialIndentation.
-	
-	self add: self newline,anInitialIndentation,self moreIndentation,(self balanceString: aPortfolio).! !
+	reporteDeTransaccionesAConcatenar linesDo: [:line |
+		self add: self newline, indentation, self moreIndentation,line.]! !
 
-!PortfolioDetailedTreePrinter methodsFor: 'reporting' stamp: 'alm 11/18/2022 14:44:12'!
-subreportReceptiveAccount: aReceptiveAccount with: anInitialIndentation
+
+!PortfolioDetailedTreePrinter methodsFor: 'reporting' stamp: 'alm 11/18/2022 15:25:26'!
+subreportPortfolio: aPortfolio
+	
+	super subreportPortfolio: aPortfolio.
+	
+	self add: self newline,indentation,self moreIndentation,(self balanceString: aPortfolio).! !
+
+!PortfolioDetailedTreePrinter methodsFor: 'reporting' stamp: 'alm 11/18/2022 15:37:12'!
+subreportReceptiveAccount: aReceptiveAccount
 	
 	| accountSummary reporteDeTransaccionesAConcatenar |
 	
-	super subreportReceptiveAccount: aReceptiveAccount with: anInitialIndentation.
+	super subreportReceptiveAccount: aReceptiveAccount.
 	
 	accountSummary := AccountSummary new.
 	reporteDeTransaccionesAConcatenar := accountSummary report: aReceptiveAccount.
-	reporteDeTransaccionesAConcatenar linesDo: [:line | self add: self newline, anInitialIndentation, self moreIndentation,line.].! !
+	self concatSummary: reporteDeTransaccionesAConcatenar.! !
 
 
 !classDefinition: #PortfolioTreePrinter category: 'ServiciosFinancieros-Solucion'!
@@ -1145,15 +1159,15 @@ PortfolioPrinter subclass: #PortfolioTreePrinter
 	poolDictionaries: ''
 	category: 'ServiciosFinancieros-Solucion'!
 
-!PortfolioTreePrinter methodsFor: 'reporting' stamp: 'alm 11/17/2022 21:24:50'!
-subreportPortfolio: aPortfolio with: anInitialIndentation
+!PortfolioTreePrinter methodsFor: 'reporting' stamp: 'alm 11/18/2022 15:26:14'!
+subreportPortfolio: aPortfolio
 
-	super subreportPortfolio: aPortfolio with: anInitialIndentation.! !
+	super subreportPortfolio: aPortfolio! !
 
-!PortfolioTreePrinter methodsFor: 'reporting' stamp: 'alm 11/17/2022 21:24:34'!
-subreportReceptiveAccount: aReceptiveAccount with: anInitialIndentation
+!PortfolioTreePrinter methodsFor: 'reporting' stamp: 'alm 11/18/2022 15:24:46'!
+subreportReceptiveAccount: aReceptiveAccount
 	
-	super subreportReceptiveAccount: aReceptiveAccount with: anInitialIndentation.! !
+	super subreportReceptiveAccount: aReceptiveAccount! !
 
 
 !classDefinition: #Transfer category: 'ServiciosFinancieros-Solucion'!
