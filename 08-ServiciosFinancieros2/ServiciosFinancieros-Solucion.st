@@ -5,20 +5,25 @@ TestCase subclass: #AccountSummaryTest
 	poolDictionaries: ''
 	category: 'ServiciosFinancieros-Solucion'!
 
-!AccountSummaryTest methodsFor: 'as yet unclassified' stamp: 'alm 11/16/2022 18:17:04'!
+!AccountSummaryTest methodsFor: 'as yet unclassified' stamp: 'alm 11/17/2022 22:13:29'!
+newline
+
+	^ String newLineString! !
+
+!AccountSummaryTest methodsFor: 'as yet unclassified' stamp: 'alm 11/17/2022 22:13:17'!
 test01
 	| account accountSummary |
 	account := ReceptiveAccount new.
 	Deposit register: 100 * peso on: account.
 	
 	accountSummary := AccountSummary new.
-	self assert: 'Depósito por 100 pesos',(Character cr) asString, 'Balance = 100 pesos' equals: (accountSummary report: account).
+	self assert: 'Depósito por 100 pesos',self newline, 'Balance = 100 pesos' equals: (accountSummary report: account).
 	
 	"account report." "'Depósito por 100 pesos'."
 	
 	"Balance = 100 pesos'".! !
 
-!AccountSummaryTest methodsFor: 'as yet unclassified' stamp: 'alm 11/16/2022 18:18:05'!
+!AccountSummaryTest methodsFor: 'as yet unclassified' stamp: 'alm 11/17/2022 22:13:17'!
 test02
 	| account accountSummary |
 	account := ReceptiveAccount new.
@@ -27,11 +32,11 @@ test02
 	
 	accountSummary := AccountSummary new.
 	
-	self assert: 'Depósito por 100 pesos', (Character cr) asString, 'Extracción por 60 pesos',(Character cr) asString, 'Balance = 40 pesos' equals: (accountSummary report: account).
+	self assert: 'Depósito por 100 pesos', self newline, 'Extracción por 60 pesos',self newline, 'Balance = 40 pesos' equals: (accountSummary report: account).
 	"account report." "'Depósito por 100 pesos'."
 ! !
 
-!AccountSummaryTest methodsFor: 'as yet unclassified' stamp: 'alm 11/16/2022 18:16:12'!
+!AccountSummaryTest methodsFor: 'as yet unclassified' stamp: 'alm 11/17/2022 22:13:17'!
 test03
 	| destinationAccount originAccount accountSummary |
 	
@@ -42,12 +47,12 @@ test03
 
 	accountSummary := AccountSummary new.
 	
-	self assert: 'Depósito por 20 pesos',(Character cr) asString,'Salida por transferencia de 20 pesos', (Character cr) asString, 'Balance = 0 pesos' equals: (accountSummary report: originAccount).
+	self assert: 'Depósito por 20 pesos',self newline,'Salida por transferencia de 20 pesos', self newline, 'Balance = 0 pesos' equals: (accountSummary report: originAccount).
 	"originAccount report."
 	
 	"Balance = 100 pesos'".! !
 
-!AccountSummaryTest methodsFor: 'as yet unclassified' stamp: 'alm 11/16/2022 18:01:00'!
+!AccountSummaryTest methodsFor: 'as yet unclassified' stamp: 'alm 11/17/2022 22:13:17'!
 test04
 	| destinationAccount originAccount accountSummary |
 	
@@ -58,11 +63,11 @@ test04
 	
 	accountSummary := AccountSummary new.
 	
-	self assert: 'Entrada por transferencia de 30 pesos',(Character cr) asString, 'Balance = 30 pesos' equals: (accountSummary report: destinationAccount). "destinationAccount report."
+	self assert: 'Entrada por transferencia de 30 pesos',self newline, 'Balance = 30 pesos' equals: (accountSummary report: destinationAccount). "destinationAccount report."
 	
 	"Balance = 100 pesos'".! !
 
-!AccountSummaryTest methodsFor: 'as yet unclassified' stamp: 'alm 11/16/2022 18:32:44'!
+!AccountSummaryTest methodsFor: 'as yet unclassified' stamp: 'alm 11/17/2022 22:13:17'!
 test05
 "Transfer net"
 	| destinationAccount originAccount transferNet |
@@ -74,8 +79,8 @@ test05
 	Transfer amount: 20 * peso from: originAccount to: destinationAccount.
 	
 	transferNet := TransferNet new.
-	self assert: 		'Entrada por transferencia de 30 pesos',(Character cr) asString,
-			'Salida por transferencia de 20 pesos', (Character cr) asString,
+	self assert: 		'Entrada por transferencia de 30 pesos',self newline,
+			'Salida por transferencia de 20 pesos', self newline,
 			'Neto = 10 pesos' 
 		equals: (transferNet report: originAccount).
 		
@@ -89,7 +94,7 @@ TestCase subclass: #PortfolioDetailedTreePrinterTest
 	poolDictionaries: ''
 	category: 'ServiciosFinancieros-Solucion'!
 
-!PortfolioDetailedTreePrinterTest methodsFor: 'as yet unclassified' stamp: 'alm 11/17/2022 16:48:44'!
+!PortfolioDetailedTreePrinterTest methodsFor: 'as yet unclassified' stamp: 'alm 11/17/2022 22:07:42'!
 test01
 	
 	| familyPortfolio myAccount portfolioDetailedTreePrinter |
@@ -101,15 +106,15 @@ test01
 	
 	portfolioDetailedTreePrinter := PortfolioDetailedTreePrinter new.
 	
-	self assert: 'Portfolio de la familia',(Character cr) asString,
-			'   Cuenta mia',(Character cr) asString,
-			'      Depósito por 100 pesos',(Character cr) asString,
-			'      Extracción por 50 pesos',(Character cr) asString,
-			'      Balance = 50 pesos',(Character cr) asString,
+	self assert: 'Portfolio de la familia',(String newLineString),
+			'   Cuenta mia',(String newLineString),
+			'      Depósito por 100 pesos',(String newLineString),
+			'      Extracción por 50 pesos',(String newLineString),
+			'      Balance = 50 pesos',(String newLineString),
 			'   Balance = 50 pesos'
 		equals: (portfolioDetailedTreePrinter report: familyPortfolio).! !
 
-!PortfolioDetailedTreePrinterTest methodsFor: 'as yet unclassified' stamp: 'alm 11/17/2022 16:58:18'!
+!PortfolioDetailedTreePrinterTest methodsFor: 'as yet unclassified' stamp: 'alm 11/17/2022 22:08:39'!
 test02
 	
 	| angiesAccount childrenPortfolio familyPortfolio johnsAccount myAccount portfolioDetailedTreePrinter reporteEsperado destinationAccount actualReport |
@@ -130,20 +135,20 @@ test02
 	
 	portfolioDetailedTreePrinter := PortfolioDetailedTreePrinter new.
 	
-	reporteEsperado:= 			'Portfolio de la familia',(Character cr) asString,
-			'   Cuenta mia',(Character cr) asString,
-			'      Depósito por 100 pesos',(Character cr) asString,
-			'      Extracción por 50 pesos',(Character cr) asString,
-			'      Balance = 50 pesos',(Character cr) asString,
-			'   Portfolio de hijos',(Character cr) asString,
-			'      Cuenta de Juan',(Character cr) asString,
-			'         Depósito por 100 pesos',(Character cr) asString,
-			'         Extracción por 60 pesos',(Character cr) asString,
-			'         Balance = 40 pesos',(Character cr) asString,
-			'      Cuenta de Angeles',(Character cr) asString,
-			'         Salida por transferencia de 20 pesos',(Character cr) asString,
-			'         Balance = -20 pesos',(Character cr) asString,
-			'      Balance = 20 pesos',(Character cr) asString,
+	reporteEsperado:= 			'Portfolio de la familia',(String newLineString),
+			'   Cuenta mia',(String newLineString),
+			'      Depósito por 100 pesos',(String newLineString),
+			'      Extracción por 50 pesos',(String newLineString),
+			'      Balance = 50 pesos',(String newLineString),
+			'   Portfolio de hijos',(String newLineString),
+			'      Cuenta de Juan',(String newLineString),
+			'         Depósito por 100 pesos',(String newLineString),
+			'         Extracción por 60 pesos',(String newLineString),
+			'         Balance = 40 pesos',(String newLineString),
+			'      Cuenta de Angeles',(String newLineString),
+			'         Salida por transferencia de 20 pesos',(String newLineString),
+			'         Balance = -20 pesos',(String newLineString),
+			'      Balance = 20 pesos',(String newLineString),
 			'   Balance = 70 pesos'.
 	actualReport := (portfolioDetailedTreePrinter report: familyPortfolio).
 	self assert: reporteEsperado		equals: actualReport. "(portfolioDetailedTreePrinter report: familyPortfolio)."
@@ -158,20 +163,7 @@ TestCase subclass: #PortfolioReportsTests
 	poolDictionaries: ''
 	category: 'ServiciosFinancieros-Solucion'!
 
-!PortfolioReportsTests methodsFor: 'as yet unclassified' stamp: 'alm 11/17/2022 14:32:06'!
-test01
-	
-	| johnsAccount familyPortfolio portfolioTreePrint |
-	johnsAccount := ReceptiveAccount named: 'Cuenta de Juan'. 
-	familyPortfolio := Portfolio named: 'Portfolio de la familia' with: johnsAccount.
-	
-	portfolioTreePrint := PortfolioTreePrinter new.
-	
-	self assert: 		'Portfolio de la familia',(Character cr) asString,
-				'   Cuenta de Juan'
-		equals: (portfolioTreePrint reportProbando: familyPortfolio ).! !
-
-!PortfolioReportsTests methodsFor: 'as yet unclassified' stamp: 'alm 11/16/2022 23:17:55'!
+!PortfolioReportsTests methodsFor: 'as yet unclassified' stamp: 'alm 11/17/2022 22:41:11'!
 test01portfolioTreePrintShowsNamesOfPortfolioAndItsAccountsInATreeLikeStructure
 	
 	| johnsAccount familyPortfolio portfolioTreePrint |
@@ -180,10 +172,11 @@ test01portfolioTreePrintShowsNamesOfPortfolioAndItsAccountsInATreeLikeStructure
 	
 	portfolioTreePrint := PortfolioTreePrinter new.
 	
-	self assert: 'Portfolio de la familia',(Character cr) asString,'Cuenta de Juan'
+	self assert: 		'Portfolio de la familia',(String newLineString),
+				'   Cuenta de Juan'
 		equals: (portfolioTreePrint report: familyPortfolio ).! !
 
-!PortfolioReportsTests methodsFor: 'as yet unclassified' stamp: 'alm 11/17/2022 14:35:25'!
+!PortfolioReportsTests methodsFor: 'as yet unclassified' stamp: 'alm 11/17/2022 22:41:11'!
 test02
 	
 	| johnsAccount familyPortfolio portfolioTreePrint angiesAccount myAccount childrenPortfolio |
@@ -195,15 +188,12 @@ test02
 	
 	portfolioTreePrint := PortfolioTreePrinter new.
 	
-	self assert: 			'Portfolio de la familia',(Character cr) asString,
-				'   Cuenta mia',(Character cr) asString,
-				'   Portfolio de hijos',(Character cr) asString,
-				'      Cuenta de Juan',(Character cr) asString,
+	self assert: 			'Portfolio de la familia',(String newLineString),
+				'   Cuenta mia',(String newLineString),
+				'   Portfolio de hijos',(String newLineString),
+				'      Cuenta de Juan',(String newLineString),
 				'      Cuenta de Angeles'
-		equals: (portfolioTreePrint reportProbando: familyPortfolio).
-		
-		
-		"(portfolioTreePrint report: familyPortfolio )."! !
+		equals: (portfolioTreePrint report: familyPortfolio).! !
 
 
 !classDefinition: #PortfolioTest category: 'ServiciosFinancieros-Solucion'!
@@ -528,6 +518,11 @@ hasRegistered: aTransaction
 
 	self subclassResponsibility ! !
 
+!Account methodsFor: 'main protocol' stamp: 'alm 11/17/2022 21:49:41'!
+report: aPortfolioPrinter with: anInitialIndentation 
+
+	self subclassResponsibility.! !
+
 !Account methodsFor: 'main protocol' stamp: 'HAW 5/25/2019 12:23:15'!
 transactions
 
@@ -580,15 +575,10 @@ hasRegistered: aTransaction
 
 	^accounts anySatisfy: [ :anAccount | anAccount hasRegistered: aTransaction ]! !
 
-!Portfolio methodsFor: 'main protocol' stamp: 'alm 11/17/2022 16:54:03'!
-report: aPortfolioTreePrinter with: anInitialIndentation 
-
-	aPortfolioTreePrinter add: anInitialIndentation,self name.
-	accounts do: [:anAccount | aPortfolioTreePrinter add: (Character cr) asString",anInitialIndentation".
-						anAccount report: aPortfolioTreePrinter with: anInitialIndentation,'   '.].
+!Portfolio methodsFor: 'main protocol' stamp: 'alm 11/17/2022 21:47:54'!
+report: aPortfolioPrinter with: anInitialIndentation 
 	
-	(aPortfolioTreePrinter isKindOf: PortfolioDetailedTreePrinter) ifTrue:
-							[aPortfolioTreePrinter add: (Character cr) asString,anInitialIndentation,'   ' ,'Balance = ',(self balance amount) asString,' pesos'.]! !
+	aPortfolioPrinter subreportPortfolio: self with: anInitialIndentation.! !
 
 !Portfolio methodsFor: 'main protocol' stamp: 'HAW 5/25/2019 11:38:32'!
 transactions
@@ -608,13 +598,10 @@ add: accountToAdd
 	! !
 
 
-!Portfolio methodsFor: 'accesing' stamp: 'alm 11/16/2022 23:34:51'!
+!Portfolio methodsFor: 'accesing' stamp: 'alm 11/17/2022 21:18:41'!
 accounts	
-	| oc |
-	oc := OrderedCollection new.
-	accounts do: [:anAccount | oc add: anAccount accounts ].
-	^ oc.
-	! !
+	^ accounts
+! !
 
 !Portfolio methodsFor: 'accesing' stamp: 'alm 11/16/2022 23:14:10'!
 name
@@ -694,6 +681,11 @@ register: aTransaction
 	transactions add: aTransaction 
 ! !
 
+!ReceptiveAccount methodsFor: 'main protocol' stamp: 'alm 11/17/2022 21:49:02'!
+report: aPortfolioPrinter with: anInitialIndentation 
+	
+	aPortfolioPrinter subreportReceptiveAccount: self with: anInitialIndentation.! !
+
 !ReceptiveAccount methodsFor: 'main protocol' stamp: 'HernanWilkinson 7/13/2011 18:37'!
 transactions 
 
@@ -709,20 +701,6 @@ addTransactionsTo: aCollectionOfTransactions
 name
 	^ name.! !
 
-!ReceptiveAccount methodsFor: 'private' stamp: 'alm 11/17/2022 15:45:21'!
-report: aPortfolioTreePrinter with: anInitialIndentation 
-	"aPortfolioTreePrinter add: '   ',self name,(Character cr) asString."
-	aPortfolioTreePrinter add: anInitialIndentation,self name.
-	(aPortfolioTreePrinter isKindOf: PortfolioDetailedTreePrinter) ifTrue: [ | accountSummary reporteDeTransaccionesAConcatenar |"imprimime las transaccines"
-		accountSummary := AccountSummary new.
-		reporteDeTransaccionesAConcatenar := accountSummary report: self.
-		reporteDeTransaccionesAConcatenar linesDo: [:line | aPortfolioTreePrinter add: (Character cr) asString, anInitialIndentation, '   ',line.]].! !
-
-
-!ReceptiveAccount methodsFor: 'accesing' stamp: 'alm 11/16/2022 23:35:16'!
-accounts
-	^ self! !
-
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
 !classDefinition: 'ReceptiveAccount class' category: 'ServiciosFinancieros-Solucion'!
@@ -736,13 +714,13 @@ named: aName
 
 !classDefinition: #AccountReport category: 'ServiciosFinancieros-Solucion'!
 Object subclass: #AccountReport
-	instanceVariableNames: 'reporteAMostrar'
+	instanceVariableNames: 'reporteAMostrar resultadoAcumulado'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'ServiciosFinancieros-Solucion'!
 
-!AccountReport methodsFor: 'as yet unclassified' stamp: 'alm 11/16/2022 18:35:46'!
-addDeposit: aDepositValue
+!AccountReport methodsFor: 'as yet unclassified' stamp: 'alm 11/17/2022 22:22:17'!
+addDeposit: aDeposit
 	^ self subclassResponsibility ! !
 
 !AccountReport methodsFor: 'as yet unclassified' stamp: 'alm 11/16/2022 18:36:17'!
@@ -753,17 +731,28 @@ addTransferDepositLeg: aTransferDepositLeg
 addTransferWithdrawLeg: aTransferWithdrawLeg
 	^ self subclassResponsibility ! !
 
-!AccountReport methodsFor: 'as yet unclassified' stamp: 'alm 11/16/2022 18:38:11'!
-addWithdraw: aWithdrawValue
+!AccountReport methodsFor: 'as yet unclassified' stamp: 'alm 11/17/2022 22:22:30'!
+addWithdraw: aWithdraw
 	^ self subclassResponsibility ! !
 
-!AccountReport methodsFor: 'as yet unclassified' stamp: 'alm 11/16/2022 18:56:29'!
+!AccountReport methodsFor: 'as yet unclassified' stamp: 'alm 11/17/2022 22:33:23'!
 initialize
-	reporteAMostrar := ''.! !
+	reporteAMostrar := ''.
+	resultadoAcumulado := 0.! !
+
+!AccountReport methodsFor: 'as yet unclassified' stamp: 'alm 11/17/2022 22:16:11'!
+newline
+
+	^ String newLineString.! !
 
 !AccountReport methodsFor: 'as yet unclassified' stamp: 'alm 11/16/2022 23:40:36'!
 report: anAccount
 	self subclassResponsibility ! !
+
+!AccountReport methodsFor: 'as yet unclassified' stamp: 'alm 11/17/2022 22:35:00'!
+resultadoAcumuladoForReport
+
+	^ resultadoAcumulado amount asString! !
 
 
 !classDefinition: #AccountSummary category: 'ServiciosFinancieros-Solucion'!
@@ -773,79 +762,75 @@ AccountReport subclass: #AccountSummary
 	poolDictionaries: ''
 	category: 'ServiciosFinancieros-Solucion'!
 
-!AccountSummary methodsFor: 'as yet unclassified' stamp: 'alm 11/16/2022 19:09:47'!
-addDeposit: aDepositValue
+!AccountSummary methodsFor: 'as yet unclassified' stamp: 'alm 11/17/2022 22:24:28'!
+addDeposit: aDeposit
 	reporteAMostrar := reporteAMostrar,
-					'Depósito por ',aDepositValue value amount asString,' pesos',
-					Character cr asString.! !
+					'Depósito por ',aDeposit valueForReport,' pesos',
+					self newline.! !
 
-!AccountSummary methodsFor: 'as yet unclassified' stamp: 'alm 11/16/2022 19:10:04'!
+!AccountSummary methodsFor: 'as yet unclassified' stamp: 'alm 11/17/2022 22:24:52'!
 addTransferDepositLeg: aTransferDepositLeg
 	reporteAMostrar := reporteAMostrar,
-					'Entrada por transferencia de ', aTransferDepositLeg value amount asString, ' pesos',
-					Character cr asString.! !
+					'Entrada por transferencia de ', aTransferDepositLeg valueForReport, ' pesos',
+					self newline.! !
 
-!AccountSummary methodsFor: 'as yet unclassified' stamp: 'alm 11/16/2022 19:10:11'!
+!AccountSummary methodsFor: 'as yet unclassified' stamp: 'alm 11/17/2022 22:24:58'!
 addTransferWithdrawLeg: aTransferWithdrawLeg
 	reporteAMostrar := reporteAMostrar,
-					'Salida por transferencia de ', aTransferWithdrawLeg value amount asString, ' pesos',
-					Character cr asString.! !
+					'Salida por transferencia de ', aTransferWithdrawLeg valueForReport, ' pesos',
+					self newline.! !
 
-!AccountSummary methodsFor: 'as yet unclassified' stamp: 'alm 11/16/2022 19:09:53'!
-addWithdraw: aWithdrawValue
-	reporteAMostrar := reporteAMostrar,'Extracción por ',aWithdrawValue value amount asString,' pesos', Character cr asString.! !
+!AccountSummary methodsFor: 'as yet unclassified' stamp: 'alm 11/17/2022 22:25:06'!
+addWithdraw: aWithdraw
+	reporteAMostrar := reporteAMostrar,'Extracción por ',aWithdraw valueForReport,' pesos', self newline.! !
 
-!AccountSummary methodsFor: 'as yet unclassified' stamp: 'alm 11/16/2022 18:58:31'!
+!AccountSummary methodsFor: 'as yet unclassified' stamp: 'alm 11/17/2022 22:34:36'!
 report: anAccount
 	
 	anAccount transactions do: [:transaction | (transaction report: self)].
-	 ^reporteAMostrar , 'Balance = ',anAccount balance amount asString,' pesos'.! !
+	resultadoAcumulado := anAccount balance.
+	 ^reporteAMostrar , 'Balance = ',self resultadoAcumuladoForReport,' pesos'.
+! !
 
 
 !classDefinition: #TransferNet category: 'ServiciosFinancieros-Solucion'!
 AccountReport subclass: #TransferNet
-	instanceVariableNames: 'netoDeTransferencia'
+	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'ServiciosFinancieros-Solucion'!
 
-!TransferNet methodsFor: 'as yet unclassified' stamp: 'alm 11/16/2022 18:35:24'!
-addDeposit: aDepositValue
+!TransferNet methodsFor: 'as yet unclassified' stamp: 'alm 11/17/2022 22:23:12'!
+addDeposit: aDeposit
 	! !
 
-!TransferNet methodsFor: 'as yet unclassified' stamp: 'alm 11/16/2022 19:05:32'!
+!TransferNet methodsFor: 'as yet unclassified' stamp: 'alm 11/17/2022 22:32:08'!
 addTransferDepositLeg: aTransferDepositLeg
 	
-	netoDeTransferencia := aTransferDepositLeg affectBalance: netoDeTransferencia.
+	resultadoAcumulado := aTransferDepositLeg affectBalance: resultadoAcumulado.
 	reporteAMostrar := reporteAMostrar,
-					'Entrada por transferencia de ', aTransferDepositLeg value amount asString, ' pesos',
-					Character cr asString.
+					'Entrada por transferencia de ', aTransferDepositLeg valueForReport, ' pesos',
+					self newline.
 	! !
 
-!TransferNet methodsFor: 'as yet unclassified' stamp: 'alm 11/16/2022 19:05:39'!
+!TransferNet methodsFor: 'as yet unclassified' stamp: 'alm 11/17/2022 22:32:08'!
 addTransferWithdrawLeg: aTransferWithdrawLeg
 
-	netoDeTransferencia := aTransferWithdrawLeg affectBalance: netoDeTransferencia.
+	resultadoAcumulado := aTransferWithdrawLeg affectBalance: resultadoAcumulado.
 	reporteAMostrar := reporteAMostrar ,
-					'Salida por transferencia de ', aTransferWithdrawLeg value amount asString, ' pesos',
-					Character cr asString.! !
+					'Salida por transferencia de ', aTransferWithdrawLeg valueForReport, ' pesos',
+					self newline.! !
 
-!TransferNet methodsFor: 'as yet unclassified' stamp: 'alm 11/16/2022 18:37:56'!
-addWithdraw: aWithdrawValue
-	! !
+!TransferNet methodsFor: 'as yet unclassified' stamp: 'alm 11/17/2022 22:23:20'!
+addWithdraw: aWithdraw! !
 
-!TransferNet methodsFor: 'as yet unclassified' stamp: 'alm 11/16/2022 19:06:47'!
-initialize
-	netoDeTransferencia := 0.
-	super initialize.! !
-
-!TransferNet methodsFor: 'as yet unclassified' stamp: 'alm 11/16/2022 19:08:35'!
+!TransferNet methodsFor: 'as yet unclassified' stamp: 'alm 11/17/2022 22:34:08'!
 report: anAccount
 	
 	anAccount transactions do: [:transaction | 
 				transaction report: self.
 				].
-	^ reporteAMostrar , 'Neto = ',netoDeTransferencia amount asString,' pesos'.
+	^ reporteAMostrar , 'Neto = ',self resultadoAcumuladoForReport,' pesos'.
 	! !
 
 
@@ -865,6 +850,10 @@ report: anAccountSummary
 value 
 
 	self subclassResponsibility ! !
+
+!AccountTransaction methodsFor: 'value' stamp: 'alm 11/17/2022 22:26:15'!
+valueForReport
+	^ self value amount asString! !
 
 
 !AccountTransaction methodsFor: 'balance' stamp: 'HAW 5/25/2019 11:25:39'!
@@ -913,10 +902,9 @@ affectBalance: aBalance
 
 	^aBalance + value ! !
 
-!Deposit methodsFor: 'balance' stamp: 'alm 11/16/2022 19:09:06'!
+!Deposit methodsFor: 'balance' stamp: 'alm 11/17/2022 22:16:52'!
 report: anAccountSummary
-	^ anAccountSummary addDeposit: self.
-	"'Depósito por ',(self value amount) asString,' pesos'."! !
+	^ anAccountSummary addDeposit: self.! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -972,10 +960,9 @@ TransferLeg subclass: #TransferDepositLeg
 	poolDictionaries: ''
 	category: 'ServiciosFinancieros-Solucion'!
 
-!TransferDepositLeg methodsFor: 'accessing' stamp: 'alm 11/16/2022 19:04:38'!
+!TransferDepositLeg methodsFor: 'accessing' stamp: 'alm 11/17/2022 22:16:41'!
 report: anAccountSummary
-	^ anAccountSummary addTransferDepositLeg: self.
-	" 'Entrada por transferencia de ', self value amount asString, ' pesos'"! !
+	^ anAccountSummary addTransferDepositLeg: self.! !
 
 !TransferDepositLeg methodsFor: 'accessing' stamp: 'LL 9/20/2020 22:26:10'!
 withdrawLeg
@@ -1001,10 +988,9 @@ depositLeg
 
 	^transfer depositLeg! !
 
-!TransferWithdrawLeg methodsFor: 'accessing' stamp: 'alm 11/16/2022 19:04:50'!
+!TransferWithdrawLeg methodsFor: 'accessing' stamp: 'alm 11/17/2022 22:17:04'!
 report: anAccountSummary
-	^ anAccountSummary addTransferWithdrawLeg: self.
-	"'Salida por transferencia de ', self value amount asString, ' pesos'"! !
+	^ anAccountSummary addTransferWithdrawLeg: self.! !
 
 
 !TransferWithdrawLeg methodsFor: 'balance' stamp: 'LL 9/20/2020 22:27:55'!
@@ -1037,10 +1023,9 @@ affectBalance: aBalance
 
 	^aBalance - value! !
 
-!Withdraw methodsFor: 'balance' stamp: 'alm 11/16/2022 19:09:17'!
+!Withdraw methodsFor: 'balance' stamp: 'alm 11/17/2022 22:17:15'!
 report: anAccountSummary
-	^ anAccountSummary addWithdraw: self.
-	" 'Extracción por ',(self value amount) asString,' pesos'."! !
+	^ anAccountSummary addWithdraw: self.! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -1054,8 +1039,34 @@ for: aValue
 	^ self new initializeFor: aValue ! !
 
 
+!classDefinition: #PortfolioPrinter category: 'ServiciosFinancieros-Solucion'!
+Object subclass: #PortfolioPrinter
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'ServiciosFinancieros-Solucion'!
+
+!PortfolioPrinter methodsFor: 'as yet unclassified' stamp: 'alm 11/17/2022 22:12:07'!
+newline
+
+	^ String newLineString! !
+
+!PortfolioPrinter methodsFor: 'as yet unclassified' stamp: 'alm 11/17/2022 22:11:52'!
+subreportPortfolio: aPortfolio with: anInitialIndentation
+	
+	self add: anInitialIndentation,aPortfolio name.
+	aPortfolio accounts do: [:anAccount | self add: self newline.
+						anAccount report: self with: anInitialIndentation,'   '.].! !
+
+!PortfolioPrinter methodsFor: 'as yet unclassified' stamp: 'alm 11/17/2022 21:24:10'!
+subreportReceptiveAccount: aReceptiveAccount with: anInitialIndentation
+	
+	self add: anInitialIndentation,aReceptiveAccount name.
+! !
+
+
 !classDefinition: #PortfolioDetailedTreePrinter category: 'ServiciosFinancieros-Solucion'!
-Object subclass: #PortfolioDetailedTreePrinter
+PortfolioPrinter subclass: #PortfolioDetailedTreePrinter
 	instanceVariableNames: 'reporteAMostrar'
 	classVariableNames: ''
 	poolDictionaries: ''
@@ -1064,6 +1075,10 @@ Object subclass: #PortfolioDetailedTreePrinter
 !PortfolioDetailedTreePrinter methodsFor: 'as yet unclassified' stamp: 'alm 11/17/2022 14:53:04'!
 add: anAccountName
 	reporteAMostrar := reporteAMostrar,anAccountName.! !
+
+!PortfolioDetailedTreePrinter methodsFor: 'as yet unclassified' stamp: 'alm 11/17/2022 21:57:40'!
+balanceString: aPortfolio
+	^ 'Balance = ',(aPortfolio balance amount) asString,' pesos'! !
 
 !PortfolioDetailedTreePrinter methodsFor: 'as yet unclassified' stamp: 'alm 11/17/2022 14:53:36'!
 initialize
@@ -1074,9 +1089,27 @@ report: aPortfolio
 	aPortfolio report: self with: ''.
 	^ reporteAMostrar.! !
 
+!PortfolioDetailedTreePrinter methodsFor: 'as yet unclassified' stamp: 'alm 11/17/2022 22:02:45'!
+subreportPortfolio: aPortfolio with: anInitialIndentation
+	
+	super subreportPortfolio: aPortfolio with: anInitialIndentation.
+	
+	self add: self newline,anInitialIndentation,'   ' ,(self balanceString: aPortfolio).! !
+
+!PortfolioDetailedTreePrinter methodsFor: 'as yet unclassified' stamp: 'alm 11/17/2022 22:02:45'!
+subreportReceptiveAccount: aReceptiveAccount with: anInitialIndentation
+	
+	| accountSummary reporteDeTransaccionesAConcatenar |
+	
+	super subreportReceptiveAccount: aReceptiveAccount with: anInitialIndentation.
+	
+	accountSummary := AccountSummary new.
+	reporteDeTransaccionesAConcatenar := accountSummary report: aReceptiveAccount.
+	reporteDeTransaccionesAConcatenar linesDo: [:line | self add: self newline, anInitialIndentation, '   ',line.].! !
+
 
 !classDefinition: #PortfolioTreePrinter category: 'ServiciosFinancieros-Solucion'!
-Object subclass: #PortfolioTreePrinter
+PortfolioPrinter subclass: #PortfolioTreePrinter
 	instanceVariableNames: 'reporteAMostrar'
 	classVariableNames: ''
 	poolDictionaries: ''
@@ -1092,18 +1125,21 @@ initialize
 	reporteAMostrar := ''.
 	! !
 
-!PortfolioTreePrinter methodsFor: 'as yet unclassified' stamp: 'alm 11/17/2022 00:28:27'!
+!PortfolioTreePrinter methodsFor: 'as yet unclassified' stamp: 'alm 11/17/2022 22:41:11'!
 report: aPortfolio 
-	| s |
-	s := aPortfolio name.
-	aPortfolio accounts do: [:account | s := s, (Character cr) asString, account name	.].
-	^s! !
-
-!PortfolioTreePrinter methodsFor: 'as yet unclassified' stamp: 'alm 11/17/2022 14:36:11'!
-reportProbando: aPortfolio 
 	
 	aPortfolio report: self with: ''.
 	^ reporteAMostrar.! !
+
+!PortfolioTreePrinter methodsFor: 'as yet unclassified' stamp: 'alm 11/17/2022 21:24:50'!
+subreportPortfolio: aPortfolio with: anInitialIndentation
+
+	super subreportPortfolio: aPortfolio with: anInitialIndentation.! !
+
+!PortfolioTreePrinter methodsFor: 'as yet unclassified' stamp: 'alm 11/17/2022 21:24:34'!
+subreportReceptiveAccount: aReceptiveAccount with: anInitialIndentation
+	
+	super subreportReceptiveAccount: aReceptiveAccount with: anInitialIndentation.! !
 
 
 !classDefinition: #Transfer category: 'ServiciosFinancieros-Solucion'!
