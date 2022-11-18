@@ -1066,10 +1066,10 @@ initializeFor: aPortfolio
 add: aLineToAddToTheReport
 	reporteAMostrar := reporteAMostrar addLine: aLineToAddToTheReport.! !
 
-!PortfolioPrinter methodsFor: 'private' stamp: 'alm 11/18/2022 15:32:33'!
+!PortfolioPrinter methodsFor: 'private' stamp: 'alm 11/18/2022 17:13:59'!
 decreaseIndentation
 
-	^ indentation := indentation copyFrom: 1 to: indentation size-3! !
+	^ indentation := indentation copyFrom: 1 to: indentation size-(self moreIndentation size)! !
 
 !PortfolioPrinter methodsFor: 'private' stamp: 'alm 11/18/2022 15:32:19'!
 increaseIndentation
@@ -1103,11 +1103,12 @@ PortfolioPrinter subclass: #PortfolioDetailedTreePrinter
 balanceString: aPortfolio
 	^ 'Balance = ',(aPortfolio balance amount) asString,' pesos'! !
 
-!PortfolioDetailedTreePrinter methodsFor: 'private' stamp: 'alm 11/18/2022 17:00:46'!
+!PortfolioDetailedTreePrinter methodsFor: 'private' stamp: 'alm 11/18/2022 17:23:04'!
 concatSummary: reporteDeTransaccionesAConcatenar
 	
-	reporteDeTransaccionesAConcatenar print linesDo: [:line |
-		self add: indentation, self moreIndentation,line.]! !
+	self increaseIndentation.
+	reporteAMostrar addLines: reporteDeTransaccionesAConcatenar with: indentation.
+	self decreaseIndentation.! !
 
 
 !PortfolioDetailedTreePrinter methodsFor: 'reporting' stamp: 'alm 11/18/2022 16:37:18'!
@@ -1154,19 +1155,23 @@ Object subclass: #ReporteAMostrar
 	poolDictionaries: ''
 	category: 'ServiciosFinancieros-Solucion'!
 
-!ReporteAMostrar methodsFor: 'as yet unclassified' stamp: 'alm 11/18/2022 16:39:42'!
-addLine: aLineToAdd
-	stringAMostrar := stringAMostrar, (String newLineString), aLineToAdd.! !
-
-!ReporteAMostrar methodsFor: 'as yet unclassified' stamp: 'alm 11/18/2022 16:41:10'!
-print
-	"Pequeño ajuste, porque addLine siempre agrega un newline al principio (incluyendo la primera vez que se lo llama)"
-	^ stringAMostrar allButFirst.! !
-
-
 !ReporteAMostrar methodsFor: 'initialization' stamp: 'alm 11/18/2022 16:20:50'!
 initialize
 	stringAMostrar := ''.! !
+
+
+!ReporteAMostrar methodsFor: 'main protocol' stamp: 'alm 11/18/2022 16:39:42'!
+addLine: aLineToAdd
+	stringAMostrar := stringAMostrar, (String newLineString), aLineToAdd.! !
+
+!ReporteAMostrar methodsFor: 'main protocol' stamp: 'alm 11/18/2022 17:22:11'!
+addLines: aReportToAddToMyself	 with: aBeggining
+	aReportToAddToMyself print linesDo: [:line | self addLine: aBeggining, line.]! !
+
+!ReporteAMostrar methodsFor: 'main protocol' stamp: 'alm 11/18/2022 16:41:10'!
+print
+	"Pequeño ajuste, porque addLine siempre agrega un newline al principio (incluyendo la primera vez que se lo llama)"
+	^ stringAMostrar allButFirst.! !
 
 
 !classDefinition: #Transfer category: 'ServiciosFinancieros-Solucion'!
