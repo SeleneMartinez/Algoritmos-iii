@@ -1056,23 +1056,23 @@ Object subclass: #PortfolioPrinter
 	poolDictionaries: ''
 	category: 'ServiciosFinancieros-Solucion'!
 
+!PortfolioPrinter methodsFor: 'reporting' stamp: 'alm 11/18/2022 14:47:49'!
+moreIndentation
+
+	^ '   '! !
+
 !PortfolioPrinter methodsFor: 'reporting' stamp: 'alm 11/18/2022 14:08:20'!
 report
 	
 	portfolio report: self with: ''.
 	^ reporteAMostrar.! !
 
-!PortfolioPrinter methodsFor: 'reporting' stamp: 'alm 11/18/2022 03:22:47'!
-subreportPortfolio: aPortfolio
-	"Punto de entrada a la recursividad, evita que desde Account tengan que saber qué indentación enviar."
-	self subreportPortfolio: aPortfolio with: ''.! !
-
-!PortfolioPrinter methodsFor: 'reporting' stamp: 'alm 11/17/2022 22:11:52'!
+!PortfolioPrinter methodsFor: 'reporting' stamp: 'alm 11/18/2022 14:48:05'!
 subreportPortfolio: aPortfolio with: anInitialIndentation
 	
 	self add: anInitialIndentation,aPortfolio name.
 	aPortfolio accounts do: [:anAccount | self add: self newline.
-						anAccount report: self with: anInitialIndentation,'   '.].! !
+						anAccount report: self with: anInitialIndentation,self moreIndentation .].! !
 
 !PortfolioPrinter methodsFor: 'reporting' stamp: 'alm 11/17/2022 21:24:10'!
 subreportReceptiveAccount: aReceptiveAccount with: anInitialIndentation
@@ -1119,14 +1119,14 @@ balanceString: aPortfolio
 	^ 'Balance = ',(aPortfolio balance amount) asString,' pesos'! !
 
 
-!PortfolioDetailedTreePrinter methodsFor: 'reporting' stamp: 'alm 11/17/2022 22:02:45'!
+!PortfolioDetailedTreePrinter methodsFor: 'reporting' stamp: 'alm 11/18/2022 14:44:22'!
 subreportPortfolio: aPortfolio with: anInitialIndentation
 	
 	super subreportPortfolio: aPortfolio with: anInitialIndentation.
 	
-	self add: self newline,anInitialIndentation,'   ' ,(self balanceString: aPortfolio).! !
+	self add: self newline,anInitialIndentation,self moreIndentation,(self balanceString: aPortfolio).! !
 
-!PortfolioDetailedTreePrinter methodsFor: 'reporting' stamp: 'alm 11/17/2022 22:02:45'!
+!PortfolioDetailedTreePrinter methodsFor: 'reporting' stamp: 'alm 11/18/2022 14:44:12'!
 subreportReceptiveAccount: aReceptiveAccount with: anInitialIndentation
 	
 	| accountSummary reporteDeTransaccionesAConcatenar |
@@ -1135,7 +1135,7 @@ subreportReceptiveAccount: aReceptiveAccount with: anInitialIndentation
 	
 	accountSummary := AccountSummary new.
 	reporteDeTransaccionesAConcatenar := accountSummary report: aReceptiveAccount.
-	reporteDeTransaccionesAConcatenar linesDo: [:line | self add: self newline, anInitialIndentation, '   ',line.].! !
+	reporteDeTransaccionesAConcatenar linesDo: [:line | self add: self newline, anInitialIndentation, self moreIndentation,line.].! !
 
 
 !classDefinition: #PortfolioTreePrinter category: 'ServiciosFinancieros-Solucion'!
